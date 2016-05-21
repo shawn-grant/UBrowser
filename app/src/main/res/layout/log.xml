@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:background="#575353">
+
+	<Button
+		android:id="@+id/clearlog"
+		android:text="CLEAR"
+		android:textSize="30dp"
+		android:textColor="#FFF555"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"/>
+
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView
+			android:id="@+id/logTextView"
+			android:textColor="#ffffff"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</ScrollView>
+
+</LinearLayout>

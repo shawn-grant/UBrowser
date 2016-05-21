@@ -1,0 +1,64 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:showAsAction="always"
+        android:id="@+id/bookmark"
+		android:icon="@drawable/bookmark"
+        android:title="Add Bookmark"/>
+
+	<item
+		android:showAsAction="always"
+        android:id="@+id/code"
+		android:icon="@drawable/code"
+        android:title="Write Code"/>
+
+	<item
+		android:showAsAction="always"
+		android:icon="@drawable/more"
+        android:title="Options">
+		<menu>
+			<item
+				android:id="@+id/history"
+				android:icon="@drawable/history"
+				android:title="History"/>
+			
+			<item
+				android:id="@+id/viewbookarks"
+				android:icon="@drawable/bookmark"
+				android:title="View Bookmarks"/>
+
+			<item
+				android:id="@+id/quickload"
+				android:icon="@drawable/speeddial"
+				android:title="Speed Dial"/>
+			
+			<item
+				android:id="@+id/print"
+				android:icon="@drawable/print"
+				android:title="Print Page"/>
+
+			<item
+				android:id="@+id/viewsource"
+				android:icon="@drawable/viewsource"
+				android:title="View Source"/>
+
+			<item
+				android:id="@+id/log"
+				android:icon="@drawable/log"
+				android:title="Console Log"/>
+
+			<item
+				android:id="@+id/settings"
+				android:icon="@drawable/settings"
+				android:title="Settings"/>
+
+			<item
+				android:id="@+id/about"
+				android:icon="@drawable/icon"
+				android:title="About"/>
+		</menu>
+	</item>
+	
+	
+
+</menu>

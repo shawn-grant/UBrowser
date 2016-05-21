@@ -1,0 +1,57 @@
+<SlidingDrawer xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/mainSlidingDrawer"
+	android:layout_width="fill_parent"
+	android:layout_height="120dp"
+	android:gravity="center"
+	android:layout_gravity="bottom|center"
+	android:handle="@+id/handle"
+	android:content="@+id/content">
+
+	<ImageView
+		android:id="@+id/handle"
+		android:background="#000000"
+		android:layout_width="60dp"
+		android:layout_height="40dp"/>
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center"
+		android:background="#000000"
+		android:id="@+id/content">
+
+		
+			<ImageView
+				android:id="@+id/stop"
+				android:src="@drawable/stop"
+				android:onClick="onClick"
+				android:layout_marginRight="10dp"
+				android:layout_width="60dp"
+				android:layout_height="60dp"/>
+
+		<HorizontalScrollView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center">
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center">
+
+				<EditText
+					android:id="@+id/urlbar"
+					android:inputType="textUri"
+					android:textColor="#FFFF00"
+					android:selectAllOnFocus="true"
+					android:maxLines="1"
+					android:minWidth="300dp"
+					android:background="#0F1116"
+					android:layout_marginRight="10dp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>		
+
+			</LinearLayout>
+		</HorizontalScrollView>
+	</LinearLayout>
+</SlidingDrawer>

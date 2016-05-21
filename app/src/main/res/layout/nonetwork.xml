@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:gravity="center"
+	android:background="#000000">
+	
+	<ImageView
+		android:src="@drawable/icon"
+		android:layout_width="80dp"
+		android:layout_height="80dp"/>
+		
+	<TextView
+		android:textSize="20dp"
+		android:textColor="#FFFF00"
+		android:text="ENSURE YOU ARE CONNECTED TO THE INTERNET VIA WIFI OR MOBILE DATA"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+    
+</LinearLayout>

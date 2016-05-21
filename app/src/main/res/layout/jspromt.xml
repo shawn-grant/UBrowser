@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+	
+	<TextView
+		android:id="@+id/jspromtTextView"
+		android:textColor="#ffffff"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"/>
+		
+		<EditText
+			android:id="@+id/jspromtEditText"
+			android:textColor="#ffffff"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"/>
+		
+		<Button
+			android:id="@+id/jspromtok"
+			android:text="OK"
+			android:textColor="#42FF00"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"/>
+		
+		<Button
+			android:id="@+id/jspromtcancel"
+			android:text="CANCEL"
+			android:textColor="#FF0404"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"/>
+    
+</LinearLayout>
