@@ -18,6 +18,11 @@
         android:title="Options">
 		<menu>
 			<item
+				android:id="@+id/incognito"
+				android:icon="@drawable/incognito"
+				android:title="Go incognito"/>
+			
+			<item
 				android:id="@+id/history"
 				android:icon="@drawable/history"
 				android:title="History"/>

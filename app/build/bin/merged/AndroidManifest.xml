@@ -84,6 +84,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.codecomplete.ubrowser.IncognitoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="Incognito"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.INCOGNITO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name="com.codecomplete.ubrowser.FloatingBubbleService"

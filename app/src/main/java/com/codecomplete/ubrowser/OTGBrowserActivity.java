@@ -142,19 +142,7 @@ public class OTGBrowserActivity extends Activity implements OnClickListener
 			nonet.setContentView(R.layout.nonetwork);
 			nonet.setTitle("NETWORK ERROR");
 			nonet.setCanceledOnTouchOutside(true);
-
-			try
-			{
-				if (new InternetConnectionAvail().execute().get() == false)
-				{
-					nonet.show();
-				}
-			}catch(ExecutionException e){
-			  e.printStackTrace();
-			}catch (InterruptedException e){
-			  e.printStackTrace();
-			}
-
+			
 			super.onPageStarted(view, url, favicon);	
 		}			
 

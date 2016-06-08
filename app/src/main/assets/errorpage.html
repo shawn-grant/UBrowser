@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Webpage Not Available</title>
+  </head>
+  <body>
+	
+    <style>
+	  body{
+	  background:black;
+	  width:100%;
+	  height:100%;
+	  color:white;
+	  }
+	  
+	  #errorcode{
+	  color:red;
+	  margin-bottom:40px;
+	  margin-top:0px;
+	  font-size:100px;
+	  }
+	  
+	  #pic{
+	  color:blue;
+	  font-size:100px;
+	  margin-bottom:0px;
+	  }
+    </style>
+	
+	<h1 id="pic">=(</h1>
+	<h2>Ooops..</h2>
+	
+	<center>
+	  <h1 id="errorcode">error</h1>
+	  
+      <p id="description">This page could not be loaded due to an error:</p>
+	  
+	  <img onClick="reloadPage();" width="100px" height="100px" src="reload.png">
+	</center>
+	
+	<h2>Things to try:</h2>
+	
+	<ul>
+	  <li>Check if the URL is valid</li>
+	  <li>Ensure you have an internet connection</li>
+	  <li>Turn off airplane mode if on</li>
+	  <li>Reload the page</li>
+	</ul>
+	
+	<script>
+	  JSInterface.setErrorCode();
+	  JSInterface.setErrorDescription();
+	  
+	  function reloadPage(){
+	    JSInterface.reloadPage();
+	  }
+	</script>
+	
+  </body>
+</html>

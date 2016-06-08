@@ -24,6 +24,7 @@ import java.util.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import java.util.concurrent.*;
+import java.lang.annotation.*;
 
 public class MainActivity extends Activity implements OnClickListener
 {
@@ -31,6 +32,10 @@ public class MainActivity extends Activity implements OnClickListener
 	ProgressBar pb;
 	EditText urlbar;
 	String goingBack;
+	
+	String failedUrl,errorDescription;
+	int error;	
+	
 
 	SlidingDrawer slider;
 	SharedPreferences savewebdata;
@@ -84,7 +89,6 @@ public class MainActivity extends Activity implements OnClickListener
 
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.getSettings().setLoadWithOverviewMode(true);
-		webview.getSettings().setBuiltInZoomControls(true);
 		webview.getSettings().setUseWideViewPort(true);
 		webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		webview.getSettings().setPluginState(WebSettings.PluginState.ON);
@@ -113,13 +117,6 @@ public class MainActivity extends Activity implements OnClickListener
 					}
 					return true;
 				}
-			});
-
-		webview.setDownloadListener(new DownloadListener() { 
-				public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength)
-				{ 
-					startActivity(new Intent(Intent.ACTION_PICK, Uri.parse(url))); 
-				} 
 			});
 
 		addFloatingMenu();
@@ -212,6 +209,11 @@ public class MainActivity extends Activity implements OnClickListener
 				startActivity(new Intent("android.intent.action.EDITOR"));
 				break;
 
+			case R.id.incognito:
+			  //go incognito
+			  startActivity(new Intent("android.intent.action.INCOGNITO"));
+			    break;
+			  
 			case R.id.history:			
 				LoadHistory();
 				break;
@@ -243,8 +245,8 @@ public class MainActivity extends Activity implements OnClickListener
 			case R.id.about:		
 				new AlertDialog.Builder(this).
 					setTitle("ABOUT").
-					setMessage("Developer: Shawn Grant" +
-							   "\nWebsite: Cortechx.com, Codecomplete.com" +
+					setMessage("Developer: Shawn Grant(shawn-grant.github.io)" +
+							   "\nCortechx,inc" +
 							   "\nDeveloped: November 28,2015" +
 							   "\nEmail: shawngrant333@gmail.com").
 					show();
@@ -321,7 +323,7 @@ public class MainActivity extends Activity implements OnClickListener
 				lp.setMargins(0, 0, 0, 10);
 				LinearLayout ll=new LinearLayout(this);
 				ll.setOrientation(LinearLayout.VERTICAL);
-				ll.setBackgroundColor(Color.WHITE);
+				ll.setBackgroundColor(Color.BLACK);
 				ll.setLayoutParams(lp);
 				ll.addView(iv, 100, 100);
 				ll.addView(tv, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -407,7 +409,6 @@ public class MainActivity extends Activity implements OnClickListener
 				{
 					// TODO: Implement this method
 					webview.loadUrl(aa.getItem(p3).toString());
-
 				}
 			});
 		new AlertDialog.Builder(this).
@@ -565,56 +566,16 @@ public class MainActivity extends Activity implements OnClickListener
 	}
 
 	public class mywebclient extends WebViewClient
-	{	
-		ConnectivityManager cm=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo ni=cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
+	  {
+		
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon)
 		{
 			// TODO: Implement this method
-			final WebView errorpage=(WebView) findViewById(R.id.errorWebView);
-
 			webview.setVisibility(View.VISIBLE);
 			pb.setVisibility(View.VISIBLE);
 			findViewById(R.id.stop).setVisibility(View.VISIBLE);
-
-			try
-			{
-				if (new InternetConnectionAvail().execute().get() == false)
-				{
-					webview.setVisibility(View.GONE);
-					errorpage.setVisibility(View.VISIBLE);
-					errorpage.setWebViewClient(new WebViewClient(){
-
-							@Override
-							public boolean shouldOverrideUrlLoading(WebView view, String eurl)
-							{
-								errorpage.loadUrl(eurl);
-								return true;
-							}
-
-							@Override
-							public void onPageFinished(WebView view, String url)
-							{
-								urlbar.setText(url);
-								getActionBar().setTitle(errorpage.getTitle());
-								getActionBar().setIcon(new BitmapDrawable(getResources(), errorpage.getFavicon()));
-							}
-						});
-
-					errorpage.loadUrl("file:///android_asset/UBrowserPages/index.html");
-				}
-				else
-				{
-					errorpage.setVisibility(View.GONE);
-					webview.setVisibility(View.VISIBLE);
-				}
-			}
-			catch (ExecutionException e)
-			{e.printStackTrace();}
-			catch (InterruptedException e)
-			{e.printStackTrace();}
+			
 			super.onPageStarted(view, url, favicon);	
 		}			
 
@@ -679,14 +640,28 @@ public class MainActivity extends Activity implements OnClickListener
 			{
 				historytxt += view.getTitle().toUpperCase() + " 》 " + url + "\n";
 			}
-			else
-			{
-				historytxt += "Untitled 》 " + url + "\n";
-			}
-
+			
 			editor.putString("history", historytxt);
 			editor.commit();
 			super.onPageFinished(view, url);
+		}
+
+	  @Override
+	  public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
+		{
+		  // TODO: Implement this method
+		  failedUrl=failingUrl;
+		  error=errorCode;
+		  errorDescription=description;
+
+		  Log.d ("OnError", description);
+		  Log.d("failedUrl",failingUrl);
+		  Log.d("errorCode",""+errorCode);
+		  
+		  webview.addJavascriptInterface (new JsInterface(), "JSInterface");
+		  view.loadUrl("file:///android_asset/errorpage.html");
+		  
+		  super.onReceivedError (view, errorCode, description, failingUrl);
 		}
 
 	}
@@ -752,6 +727,32 @@ public class MainActivity extends Activity implements OnClickListener
 		}
 
 	}
+	
+	public class JsInterface{
+	  Context context;
+	  
+	  public void JsInterface(Context c){
+		context=c;
+	  }
+	  
+		@JavascriptInterface
+	  public void reloadPage(){
+		webview.loadUrl(failedUrl);
+		  Log.d("reloadPage()",failedUrl);
+	  }
+	  
+		@JavascriptInterface
+	  public void setErrorCode(){
+		  webview.loadUrl("javascript:document.getElementById('errorcode').innerHTML=\""+error+"\";");
+		  Log.d("setErrorCode()",""+error);
+	  }
+	  
+		@JavascriptInterface
+	  public void setErrorDescription(){
+		  webview.loadUrl("javascript:document.getElementById('description').innerHTML=\""+errorDescription+"\";");
+		  Log.d("setErrorDescription()",errorDescription);
+	  }
+	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -774,7 +775,9 @@ public class MainActivity extends Activity implements OnClickListener
 	protected void onStop()
 	{
 		// TODO: Implement this method
-		editor.putString("lasturl", webview.getUrl().toString());
+	  if(webview.getUrl().equals("file:///android_asset/errorpage.html")!=true){
+		  editor.putString("lasturl", webview.getUrl().toString());
+		}
 		editor.commit();
 		super.onStop();
 	}
