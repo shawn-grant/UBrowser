@@ -39,7 +39,7 @@
 				android:layout_height="wrap_content"
 				android:gravity="center">
 
-				<EditText
+				<AutoCompleteTextView
 					android:id="@+id/urlbar"
 					android:inputType="textUri"
 					android:textColor="#FFFF00"

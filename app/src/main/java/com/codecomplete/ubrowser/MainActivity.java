@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements OnClickListener
 {
 	WebView webview;
 	ProgressBar pb;
-	EditText urlbar;
+	AutoCompleteTextView urlbar;
 	String goingBack;
 	
 	String failedUrl,errorDescription;
@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 		webview = (WebView)findViewById(R.id.mainWebView);
 		pb = (ProgressBar)findViewById(R.id.mainProgressBar);
-		urlbar = (EditText)findViewById(R.id.urlbar);
+		urlbar = (AutoCompleteTextView)findViewById(R.id.urlbar);
 
 		historytxt = savewebdata.getString("history", "");
 		bookmarks = savewebdata.getString("bookmarks", "");
@@ -106,22 +106,48 @@ public class MainActivity extends Activity implements OnClickListener
 			webview.loadUrl(url.toString());
 		}
 
-		urlbar.setOnEditorActionListener(new OnEditorActionListener(){
-				@Override
-				public boolean onEditorAction(TextView p1, int p2, KeyEvent p3)
-				{
-					if (p2 == EditorInfo.IME_ACTION_DONE || p2 == EditorInfo.IME_ACTION_NEXT)
-					{ 
-						String webpage=	urlbar.getText().toString();
-						Search(webpage);
-					}
-					return true;
-				}
-			});
-
+		setUrlBarControl();
 		addFloatingMenu();
 		//startService(new Intent( "FloatingBubbleService"));
     }
+	
+	private void setUrlBarControl()
+	  {
+		// TODO: Implement this method
+		String[] list=historytxt.split("\n");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, list);
+		urlbar.setAdapter(adapter);
+		urlbar.setOnItemSelectedListener (new OnItemSelectedListener (){
+
+			  @Override
+			  public void onNothingSelected(AdapterView<?> p1)
+				{
+				  // TODO: Implement this method
+				}
+
+			  @Override
+			  public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
+				{
+				  // TODO: Implement this method
+				  String new_url=p1.getAdapter().getItem(p3).toString().split(" 》 ")[1];
+				  webview.loadUrl(new_url);
+				}
+			});
+
+		//search on enter pressed
+		urlbar.setOnEditorActionListener(new OnEditorActionListener(){
+			  @Override
+			  public boolean onEditorAction(TextView p1, int p2, KeyEvent p3)
+				{
+				  if (p2 == EditorInfo.IME_ACTION_DONE || p2 == EditorInfo.IME_ACTION_NEXT)
+					{ 
+					  String webpage=	urlbar.getText().toString();
+					  Search(webpage);
+					}
+				  return true;
+				}
+			});
+	  }
 
 	public void addFloatingMenu()
 	{

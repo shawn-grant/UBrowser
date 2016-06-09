@@ -28,7 +28,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 	WebView webview;
 	ProgressBar pb;
-	EditText urlbar;
+	AutoCompleteTextView urlbar;
 	String goingBack;
 	
 	String failedUrl,errorDescription;
@@ -64,7 +64,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 		webview = (WebView)findViewById(R.id.mainWebView);
 		pb = (ProgressBar)findViewById(R.id.mainProgressBar);
-		urlbar = (EditText)findViewById(R.id.urlbar);
+		urlbar = (AutoCompleteTextView)findViewById(R.id.urlbar);
 		
 		//Allowing access to web icons
 		WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
@@ -77,6 +77,35 @@ public class IncognitoActivity extends Activity implements OnClickListener
 		webview.setWebViewClient(new mywebclient());
 		webview.setWebChromeClient(new MyWebChromeClient());
 		
+		setUrlBarControl();
+		webview.loadUrl("file:///android_asset/incognito.html");
+		addFloatingMenu();
+	  }
+
+	private void setUrlBarControl()
+	  {
+		// TODO: Implement this method
+		String[] list=historytxt.split("\n");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, list);
+		urlbar.setAdapter(adapter);
+		urlbar.setOnItemSelectedListener (new OnItemSelectedListener (){
+
+			  @Override
+			  public void onNothingSelected(AdapterView<?> p1)
+				{
+				  // TODO: Implement this method
+				}
+
+			  @Override
+			  public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
+				{
+				  // TODO: Implement this method
+				  String new_url=p1.getAdapter().getItem(p3).toString().split(" 》 ")[1];
+				  webview.loadUrl(new_url);
+				}
+			});
+		
+		//search on enter pressed
 		urlbar.setOnEditorActionListener(new OnEditorActionListener(){
 			  @Override
 			  public boolean onEditorAction(TextView p1, int p2, KeyEvent p3)
@@ -89,9 +118,6 @@ public class IncognitoActivity extends Activity implements OnClickListener
 				  return true;
 				}
 			});
-			
-		webview.loadUrl("file:///android_asset/incognito.html");
-		addFloatingMenu();
 	  }
 	  
 	public void addFloatingMenu()
