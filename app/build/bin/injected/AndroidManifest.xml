@@ -3,8 +3,8 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.codecomplete.ubrowser"
 	android:installLocation="preferExternal"
-	android:versionCode="7"
-	android:versionName="7.0">
+	android:versionCode="8"
+	android:versionName="8.0">
 
 	<uses-sdk
 		android:minSdkVersion="15"
@@ -114,7 +114,6 @@
 		<activity
 			android:name=".EditorActivity"
 			android:label="HTML/JS editor"
-			android:theme="@style/AppTheme"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 
 			<intent-filter>
@@ -132,7 +131,6 @@
 		<activity
 			android:name=".SettingsActivity"
 			android:label="SETTINGS"
-			android:theme="@style/AppTheme"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 
 			<intent-filter>
@@ -150,7 +148,6 @@
 		<activity
 			android:name=".IncognitoActivity"
 			android:label="Incognito"
-			android:theme="@style/AppTheme"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 
 			<intent-filter>
@@ -165,11 +162,22 @@
 
 		</activity>
 
-		<service
-			android:name=".FloatingBubbleService"
-			android:label="@string/app_name">
+		<activity
+			android:name=".SourceViewer"
+			android:label="View Source"
+			android:configChanges="orientation|keyboardHidden|screenSize">
 
-		</service>
+			<intent-filter>
+
+				<action
+					android:name="android.intent.action.VIEW_SOURCE"/>
+
+				<category
+					android:name="android.intent.category.DEFAULT"/>
+
+			</intent-filter>
+
+		</activity>
 
 	</application>
 

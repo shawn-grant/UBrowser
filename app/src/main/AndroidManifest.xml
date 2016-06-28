@@ -60,7 +60,6 @@
 		<activity
 			android:name=".EditorActivity"
 			android:label="HTML/JS editor" 
-			android:theme="@style/AppTheme" 
 			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.EDITOR" />
@@ -71,8 +70,7 @@
 		
 		<activity
 			android:name=".SettingsActivity"
-			android:label="SETTINGS" 
-			android:theme="@style/AppTheme" 
+			android:label="SETTINGS"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.SETTINGS" />
@@ -83,8 +81,7 @@
 		
 		<activity
 			android:name=".IncognitoActivity"
-			android:label="Incognito" 
-			android:theme="@style/AppTheme" 
+			android:label="Incognito"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.INCOGNITO" />
@@ -93,12 +90,17 @@
 			</intent-filter>
         </activity>
 		
-		<service
-			android:name=".FloatingBubbleService"
-            android:label="@string/app_name" >
+		<activity
+			android:name=".SourceViewer"
+			android:label="View Source"
+			android:configChanges="orientation|keyboardHidden|screenSize">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW_SOURCE" />
 
-		</service>
-
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+        </activity>
+		
     </application>
 
 </manifest>

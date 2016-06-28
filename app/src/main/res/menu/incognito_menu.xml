@@ -39,4 +39,9 @@
 				android:title="About"/>
 		</menu>
 	</item>
+	
+	<item
+		android:id="@+id/ABhide"
+		android:icon="@drawable/icon"
+		android:title="Toggle ActionBar"/>
 </menu>

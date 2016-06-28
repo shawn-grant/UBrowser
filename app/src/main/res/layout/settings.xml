@@ -1,11 +1,37 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-	android:gravity="center"
-	android:background="#D7D5E2"
-    android:orientation="vertical">
-	
-	*/Use oveview?
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:gravity="center">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:orientation="vertical">
+
+		<!--dark theme-->
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:gravity="center"
+			android:background="#A3A0AF"
+			android:orientation="horizontal">
+			<TextView
+				android:text="Dark Theme "
+				android:textSize="30dp"
+				android:textColor="#6B6C6D"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+			<Switch
+				android:id="@+id/themeSwitch"
+				android:textOn="ON"
+				android:textOff="OFF"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+		</LinearLayout>
+
+		<!--overview mode-->
 		<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -26,72 +52,51 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"/>
 		</LinearLayout>
-		
-		*/enable javascript
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="10dp"
-		android:gravity="center"
-		android:background="#A3A0AF"
-		android:orientation="horizontal">
-		<TextView
-			android:text="Enable Javascript "
-			android:textSize="30dp"
-			android:textColor="#6B6C6D"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-		<Switch
-			android:id="@+id/javascriptSwitch"
-			android:textOn="ENABLED"
-			android:textOff="DISABLED"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+
+		<!--enable javascript-->
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:gravity="center"
+			android:background="#A3A0AF"
+			android:orientation="horizontal">
+			<TextView
+				android:text="Enable Javascript "
+				android:textSize="30dp"
+				android:textColor="#6B6C6D"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+			<Switch
+				android:id="@+id/javascriptSwitch"
+				android:textOn="ENABLED"
+				android:textOff="DISABLED"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+		</LinearLayout>
+
+		<!--enable plugins-->
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:gravity="center"
+			android:background="#A3A0AF"
+			android:orientation="horizontal">
+			<TextView
+				android:text="Allow Plug-ins "
+				android:textSize="30dp"
+				android:textColor="#6B6C6D"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+			<Switch
+				android:id="@+id/pluginsSwitch"
+				android:textOn="ENABLED"
+				android:textOff="DISABLED"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+		</LinearLayout>
+
+
 	</LinearLayout>
-	
-	*/enable plugins
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="10dp"
-		android:gravity="center"
-		android:background="#A3A0AF"
-		android:orientation="horizontal">
-		<TextView
-			android:text="Allow Plug-ins "
-			android:textSize="30dp"
-			android:textColor="#6B6C6D"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-		<Switch
-			android:id="@+id/pluginsSwitch"
-			android:textOn="ENABLED"
-			android:textOff="DISABLED"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-	</LinearLayout>
-    
-	<!--floating bubble-->
-	*/enable plugins
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="10dp"
-		android:gravity="center"
-		android:background="#A3A0AF"
-		android:orientation="horizontal">
-		<TextView
-			android:text="Use Bubble Service "
-			android:textSize="30dp"
-			android:textColor="#6B6C6D"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-		<Switch
-			android:id="@+id/serviceSwitch"
-			android:textOn="ON"
-			android:textOff="OFF"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-	</LinearLayout>
-		
-</LinearLayout>
+</ScrollView>

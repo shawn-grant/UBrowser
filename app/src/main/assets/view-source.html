@@ -1,0 +1,36 @@
+<html>
+  <head>
+	<title>View Source</title>
+	<link rel="stylesheet" href="highlight.JS/styles/darkula.css">
+  </head>
+  <body>
+	
+<style>
+  body{
+    padding:0px;
+  }
+  
+  pre{
+    margin:0px;
+  }
+</style>
+	
+	<pre>
+	  <code class="html">
+		<!doctype html>
+		public static final int Main(int[] args){
+		}
+	  </code>
+	</pre>
+	 	
+	<script>
+	  var code=JSInterface.getHtml();
+	  document.getElementsByTagName('code')[0].innerText="<!DOCTYPE html>\n<html>\n"+code+"\n</html>";
+	</script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="highlight.JS/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+	
+	</body>
+</html>

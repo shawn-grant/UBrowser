@@ -50,7 +50,7 @@
 			<item
 				android:id="@+id/log"
 				android:icon="@drawable/log"
-				android:title="Console Log"/>
+				android:title="View Log"/>
 
 			<item
 				android:id="@+id/settings"
@@ -64,6 +64,9 @@
 		</menu>
 	</item>
 	
-	
+	<item
+		android:id="@+id/ABhide"
+		android:icon="@drawable/icon"
+		android:title="Toggle ActionBar"/>
 
 </menu>

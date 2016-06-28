@@ -4,13 +4,6 @@
 	android:gravity="center"
     android:orientation="vertical">
 	
-	<ProgressBar
-		android:id="@+id/otgactivityProgressBar"
-		android:max="100"
-		style="@android:style/Widget.ProgressBar.Horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"/>
-	
 	<WebView
 		android:id="@+id/otgactivityWebView"
 		android:layout_width="fill_parent"

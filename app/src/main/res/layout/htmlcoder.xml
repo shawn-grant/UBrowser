@@ -1,40 +1,36 @@
 <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-	android:id="@+id/htmlcoderViewFlipper">
+	android:id="@+id/editorViewFlipper">
 
+	<!--html area-->
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
 		android:background="#ffffff"
-		android:gravity="top"
-		android:id="@+id/coder">
+		android:gravity="top">
 
-		<LinearLayout
+		<EditText
+			android:id="@+id/htmlEditText"
+			android:inputType="textMultiLine"
+			android:textColor="#000000"
+			android:background="#ffffff"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="center"
-			android:background="#65686F">
-			<Button
-				android:id="@+id/coderrun"
-				android:text="RUN"
-				android:onClick="onClick"
-				android:textSize="30dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"/>
-			<Switch
-				android:id="@+id/codeswitch"
-				android:textSize="30dp"
-				android:textOn="HTML"
-				android:textOff="JAVASCRIPT"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"/>
-		</LinearLayout>
+			android:layout_height="wrap_content"/>
 
-		<AutoCompleteTextView
-			android:id="@+id/coderTextView"
+	</LinearLayout>
+	
+	<!--html area-->
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:background="#ffffff"
+		android:gravity="top">
+
+		<EditText
+			android:id="@+id/jsEditText"
 			android:inputType="textMultiLine"
 			android:textColor="#000000"
 			android:background="#ffffff"
@@ -43,30 +39,18 @@
 
 	</LinearLayout>
 
+	<!--content webview-->
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
 		android:gravity="center"
-		android:weightSum="10"
 		android:background="#000000">
 
 		<WebView
-			android:id="@+id/coderwebView"
-			android:layout_weight="4"
+			android:id="@+id/editorwebView"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"/>
-		
-		<ScrollView
-			android:layout_weight="6"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent">
-			<TextView
-				android:id="@+id/coderlogTextView"
-				android:textColor="#39AC22"
-				android:layout_marginLeft="5dp"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"/>
-		</ScrollView>
+			android:layout_height="fill_parent"/>	
 	</LinearLayout>
+	
 </ViewFlipper>

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codecomplete.ubrowser"
     android:installLocation="preferExternal"
-    android:versionCode="7"
-    android:versionName="7.0" >
+    android:versionCode="8"
+    android:versionName="8.0" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -65,8 +65,7 @@
         <activity
             android:name="com.codecomplete.ubrowser.EditorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="HTML/JS editor"
-            android:theme="@style/AppTheme" >
+            android:label="HTML/JS editor" >
             <intent-filter>
                 <action android:name="android.intent.action.EDITOR" />
 
@@ -76,8 +75,7 @@
         <activity
             android:name="com.codecomplete.ubrowser.SettingsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="SETTINGS"
-            android:theme="@style/AppTheme" >
+            android:label="SETTINGS" >
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
 
@@ -87,19 +85,23 @@
         <activity
             android:name="com.codecomplete.ubrowser.IncognitoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="Incognito"
-            android:theme="@style/AppTheme" >
+            android:label="Incognito" >
             <intent-filter>
                 <action android:name="android.intent.action.INCOGNITO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.codecomplete.ubrowser.SourceViewer"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="View Source" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_SOURCE" />
 
-        <service
-            android:name="com.codecomplete.ubrowser.FloatingBubbleService"
-            android:label="@string/app_name" >
-        </service>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
