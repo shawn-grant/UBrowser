@@ -20,11 +20,14 @@ import com.oguzdev.circularfloatingactionmenu.library.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.util.*;
 
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import java.util.concurrent.*;
-import java.lang.annotation.*;
 
 public class MainActivity extends Activity implements OnClickListener
   {
@@ -40,6 +43,13 @@ public class MainActivity extends Activity implements OnClickListener
 	String logtxt;
 
 	String historytxt,bookmarks;
+
+	private int ID_SAVEIMAGE=1000;
+	private int ID_VIEWIMAGE=2000;
+	private int ID_SAVELINK=3000;
+	private int ID_SHARELINK=4000;
+	private int ID_OPENLINK=5000;
+	private int ID_OPENLINKINFLOAT=6000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -100,12 +110,14 @@ public class MainActivity extends Activity implements OnClickListener
 		webview.setWebViewClient (new mywebclient ());
 		webview.setWebChromeClient (new MyWebChromeClient ());
 		webview.addJavascriptInterface (new JsInterface (), "JSInterface");
+		registerForContextMenu (webview);
 
 		Uri url = getIntent ().getData ();
 
 		if (url == null) {
 			webview.loadUrl (savewebdata.getString ("lasturl", "http://www.google.com/?gws_rd=cr&ei=c-qhVJJsy5XIBN7UgagD"));
-		  } else {
+		  }
+		else {
 			webview.loadUrl (url.toString ());
 		  }
 	  }
@@ -184,10 +196,11 @@ public class MainActivity extends Activity implements OnClickListener
 
 	public void Search(String webpage)
 	  {
-
+		
 		if (URLUtil.isValidUrl (webpage)) {
 			webview.loadUrl (webpage);
-		  } else {
+		  }
+		else {
 			webview.loadUrl ("http://www.google.com/search?sclient=tablet-gws&safe=active&site=&source=hp&q=" + webpage + "&oq=" + webpage + "&gs_l=tablet-gws.3..0i131j0l2.18370.26152.0.27669.7.7.0.0.0.0.473.1455.2-1j1j2.4.0..3..0...1c.1.64.tablet-gws..3.4.1453.5pQH1AWhaxo");
 		  }
 
@@ -195,6 +208,117 @@ public class MainActivity extends Activity implements OnClickListener
 		Toast.makeText (getApplicationContext (), "...loading...", 
 						Toast.LENGTH_LONG).show ();
 	  }
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+	  { 
+		super.onCreateContextMenu (menu, v, menuInfo); 
+		final WebView.HitTestResult result = webview.getHitTestResult ();
+
+		MenuItem.OnMenuItemClickListener handler = new MenuItem.OnMenuItemClickListener () { 
+			public boolean onMenuItemClick(MenuItem item) 
+			  { 
+				// do the menu action
+				switch (item.getItemId ()) {
+					  //SAVE IMAGE
+					case 1000:
+					  try {
+						  HttpClient httpclient = new DefaultHttpClient ();
+						  HttpGet httpget = new HttpGet (result.getExtra ()); 
+						  HttpResponse response = httpclient.execute (httpget); 
+						  HttpEntity entity = response.getEntity (); 
+
+						  if (entity != null) { 
+							  URL url = new URL (result.getExtra ()); 
+							  //Grabs the file part of the URL string 
+							  String fileName = url.getFile (); 
+							  //Make sure we are grabbing just the filename 
+							  int index = fileName.lastIndexOf ("/"); 
+							  if (index >= 0) fileName = fileName.substring (index); 
+							  //Create a temporary file 
+							  File tempFile = new File (Environment.getExternalStorageDirectory (), fileName); 
+
+							  if (!tempFile.exists ()) tempFile.createNewFile (); 
+							  InputStream instream = entity.getContent (); 
+							  BufferedInputStream bufferedInputStream = new BufferedInputStream (instream); 
+							  //Read bytes into the buffer 
+							  ByteArrayBuffer buffer = new ByteArrayBuffer (50); 
+							  int current = 0; 
+
+							  while ((current = bufferedInputStream.read ()) != -1) { 
+								  buffer.append ((byte) current); 
+								}
+							  //Write the buffer to the file 
+							  FileOutputStream stream = new FileOutputStream (tempFile); 
+							  stream.write (buffer.toByteArray ()); 
+							  stream.close ();
+							  Toast.makeText (MainActivity.this, "Saved", 2000).show ();
+							}
+						}
+					  catch (IOException e) {
+						  e.printStackTrace ();
+						  Toast.makeText (MainActivity.this, "Failed", 2000).show ();
+						}
+
+					  break;
+
+					  //VIEW IMAGE
+					case 2000:
+					  webview.loadUrl (result.getExtra ());
+					  break;
+
+					  //SAVE LINK
+					case 3000:
+					  ClipboardManager clipboard = (ClipboardManager) getSystemService (CLIPBOARD_SERVICE); 
+					  ClipData clip = ClipData.newPlainText (result.getExtra (), result.getExtra ()); 
+					  clipboard.setPrimaryClip (clip);
+					  Toast.makeText (MainActivity.this, "Saved", 2000).show ();
+					  break;
+
+					  //SHARE LINK
+					case 4000:
+					  Intent intent = new Intent (Intent.ACTION_SEND); 
+					  intent.setType ("text/plain"); 
+					  intent.putExtra (Intent.EXTRA_TEXT, result.getExtra ()); 
+					  intent.putExtra (Intent.EXTRA_SUBJECT, "Check out this site!");
+					  startActivity (Intent.createChooser (intent, "Share Via..."));
+					  break;
+
+					  //OPEN LINK
+					case 5000:
+					  webview.loadUrl (result.getExtra ());
+					  break;
+
+					  //OPEN LINK IN FLOATING TAB
+					case 6000:
+					  Intent openInOtg=new Intent ("android.intent.action.OTG");
+					  openInOtg.setData (Uri.parse (result.getExtra ()));
+					  startActivity (openInOtg);
+					  break;
+				  }
+			    return true; 
+			  } 
+		  }; 
+
+		if (result.getType () == WebView.HitTestResult.IMAGE_TYPE || result.getType () == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+			// Menu options for an image. 
+			//set the header title to the image url 
+			menu.setHeaderTitle (result.getExtra ());
+			menu.add (0, ID_SAVEIMAGE, 0, "Save Image").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler); 
+		  }
+		else if (result.getType () == WebView.HitTestResult.ANCHOR_TYPE || result.getType () == WebView.HitTestResult.SRC_ANCHOR_TYPE) { 
+			// Menu options for a hyperlink. 
+			//set the header title to the link url 
+			menu.setHeaderTitle (result.getExtra ()); 
+			menu.add (0, ID_SAVELINK, 0, "Save Link").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_SHARELINK, 0, "Share Link").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_OPENLINK, 0, "Open").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_OPENLINKINFLOAT, 0, "Open in Floating Browser").setOnMenuItemClickListener (handler);
+		  } 
+	  }
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -264,7 +388,8 @@ public class MainActivity extends Activity implements OnClickListener
 			case R.id.ABhide:
 			  if (getActionBar ().isShowing ()) {
 				  getActionBar ().hide ();
-				} else {
+				}
+			  else {
 				  getActionBar ().show ();
 				}
 			  break;
@@ -318,7 +443,8 @@ public class MainActivity extends Activity implements OnClickListener
 
 		for (int i=0;list.length > i;i++) {
 			final String item=list [i];
-			if (item.equals ("")) {} else {
+			if (item.equals ("")) {}
+			else {
 				String [] parts=item.split (" 》 ");
 				String title=parts [0];
 				final String url=parts [1];
@@ -402,6 +528,7 @@ public class MainActivity extends Activity implements OnClickListener
 		// TODO: Implement this method
 		final AlertDialog ad=new AlertDialog.Builder (this).create ();
 		ArrayList<String> a=new ArrayList<String> ();
+		a.add ("http://cortechx.github.io");
 		a.add ("http://google.com");
 		a.add ("http://facebook.com");
 		a.add ("http://youtube.com");
@@ -410,6 +537,7 @@ public class MainActivity extends Activity implements OnClickListener
 		a.add ("http://jutc.com");
 		a.add ("http://twitter.com");
 		a.add ("http://microsoft.com");
+		a.add ("http://omegarenovation.ca");
 		a.add ("http://translate.google.com");
 		a.add ("http://developer.android.com");
 
@@ -444,7 +572,8 @@ public class MainActivity extends Activity implements OnClickListener
 
 		for (int i=0;i < list.length;i++) {
 			String item=list [i];
-			if (item.equals ("")) {} else {
+			if (item.equals ("")) {}
+			else {
 				String title=item.split (" 》 ") [0];
 				String url=item.split (" 》 ") [1];
 				titleArray.add (title);
@@ -513,20 +642,21 @@ public class MainActivity extends Activity implements OnClickListener
 
 	public void printWebDoc()
 	  {
-		android.print.PrintManager printManager = (PrintManager) getSystemService (Context.PRINT_SERVICE);
+		// Check if Kitkat or higher
+		if (Build.VERSION.SDK_INT >= 19) {
+			android.print.PrintManager printManager = (PrintManager) getSystemService (Context.PRINT_SERVICE);
+			// Get a print adapter instance
+			android.print.PrintDocumentAdapter printAdapter = webview.createPrintDocumentAdapter ();
 
-		// Get a print adapter instance
-		android.print.PrintDocumentAdapter printAdapter = webview.createPrintDocumentAdapter ();
-
-		if (printManager != null && printAdapter != null) {
 			// Create a print job with name and adapter instance
 			String jobName = getString (R.string.app_name) + " Web Document";
 			printManager.print (jobName, printAdapter,
 								new PrintAttributes.Builder ().build ());
-		  } else {
+		  }
+		else {
 			new AlertDialog.Builder (this).
 			  setTitle ("Printing Error").
-			  setMessage ("Unable to print the document.\nIs a printing service available on this device?").show ();
+			  setMessage ("Unable to print the document.\nThis only supported on Android Kitkat(API 19) and higher").show ();
 		  }
 	  }
 
@@ -609,19 +739,22 @@ public class MainActivity extends Activity implements OnClickListener
 				intent.setDataAndType (Uri.parse (url), "audio/*"); 
 				startActivity (Intent.createChooser (intent, "Open Using..."));
 				return true; 
-			  } else if (url.contains (".mp4") || url.contains (".3gp")) { 
+			  }
+			else if (url.contains (".mp4") || url.contains (".3gp")) { 
 				Intent intent = new Intent (Intent.ACTION_VIEW); 
 				intent.setDataAndType (Uri.parse (url), "video/*"); 
 				startActivity (Intent.createChooser (intent, "Open Using...")); 
 				return true; 
-			  } else if (url.contains ("youtube.com")) {
+			  }
+			else if (url.contains ("youtube.com")) {
 				startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse (url)));
 				return true;
 			  }
 
 			if ("about:blank".equals (url) && view.getTag () != null) {
 				view.loadUrl (view.getTag ().toString ()); 
-			  } else { 
+			  }
+			else { 
 				view.setTag (url); 
 			  }
 
@@ -638,7 +771,8 @@ public class MainActivity extends Activity implements OnClickListener
 			if ("about:blank".equals (url) && goingBack.equals ("true")) {
 				view.goBack ();
 				goingBack = "";
-			  } else if ("about:blank".equals (url) && goingBack.equals ("false")) {
+			  }
+			else if ("about:blank".equals (url) && goingBack.equals ("false")) {
 				view.goForward ();
 				goingBack = "";
 			  }
@@ -711,7 +845,8 @@ public class MainActivity extends Activity implements OnClickListener
 			// TODO: Implement this method
 			if (newProgress != 100) {
 				getActionBar ().setSubtitle ("Loading: " + newProgress + "%");
-			  } else {
+			  }
+			else {
 				getActionBar ().setSubtitle (null);
 			  }
 			super.onProgressChanged (view, newProgress);
@@ -755,7 +890,8 @@ public class MainActivity extends Activity implements OnClickListener
 			if (webview.canGoBack ()) {
 				webview.goBack ();
 				goingBack = "true";
-			  } else {finish ();}
+			  }
+			else {finish ();}
 			return true;
 		  }
 

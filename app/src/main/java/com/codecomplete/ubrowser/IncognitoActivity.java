@@ -29,7 +29,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 	WebView webview;
 	AutoCompleteTextView urlbar;
 	String goingBack;
-    
+
 	SlidingDrawer slider;
 	SharedPreferences savewebdata;
 	SharedPreferences.Editor editor;
@@ -47,7 +47,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			setTheme (R.style.DarkTheme);
 		  }
 		setContentView (R.layout.main);
-		
+
 		editor = savewebdata.edit ();
 
 		historytxt = savewebdata.getString ("history", "");
@@ -70,27 +70,27 @@ public class IncognitoActivity extends Activity implements OnClickListener
 		//Allowing access to web icons
 		WebIconDatabase.getInstance ().open (getDir ("icons", MODE_PRIVATE).getPath ());
 		//Make sure No cookies are created 
-		android.webkit.CookieManager.getInstance().setAcceptCookie(false); 
+		android.webkit.CookieManager.getInstance ().setAcceptCookie (false); 
 
 		webview.getSettings ().setJavaScriptEnabled (savewebdata.getBoolean ("Javascript", true));
 		webview.getSettings ().setLoadWithOverviewMode (savewebdata.getBoolean ("Overview", true));
 		webview.getSettings ().setUseWideViewPort (true);
 		webview.getSettings ().setJavaScriptCanOpenWindowsAutomatically (true);
-		webview.getSettings().setBuiltInZoomControls(true);
-		webview.getSettings().setDisplayZoomControls(false);
-        
-		//Make sure no caching is done 
-		webview.getSettings().setCacheMode(webview.getSettings().LOAD_NO_CACHE); 
-		webview.getSettings().setAppCacheEnabled(false);
-		webview.clearHistory(); 
-		webview.clearCache(true); 
-		
-		//Make sure no autofill for Forms/ user-name password happens for the app 
-		webview.clearFormData();
-		webview.getSettings().setSavePassword(false); 
-		webview.getSettings().setSaveFormData(false); 
+		webview.getSettings ().setBuiltInZoomControls (true);
+		webview.getSettings ().setDisplayZoomControls (false);
 
-		
+		//Make sure no caching is done 
+		webview.getSettings ().setCacheMode (webview.getSettings ().LOAD_NO_CACHE); 
+		webview.getSettings ().setAppCacheEnabled (false);
+		webview.clearHistory (); 
+		webview.clearCache (true); 
+
+		//Make sure no autofill for Forms/ user-name password happens for the app 
+		webview.clearFormData ();
+		webview.getSettings ().setSavePassword (false); 
+		webview.getSettings ().setSaveFormData (false); 
+
+
 		if (savewebdata.getBoolean ("Plugins", true)) {
 			webview.getSettings ().setPluginState (WebSettings.PluginState.ON);
 		  }
@@ -113,10 +113,10 @@ public class IncognitoActivity extends Activity implements OnClickListener
 				{
 				  // TODO: Implement this method
 				  String new_url=list [p3].split (" 》 ") [1];
-				  Search(new_url);
+				  Search (new_url);
 				}
 			});
-			
+
 		//search on enter pressed
 		urlbar.setOnEditorActionListener (new OnEditorActionListener (){
 			  @Override
@@ -177,7 +177,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 		if (URLUtil.isValidUrl (webpage)) {
 			webview.loadUrl (webpage);
-		  } else {
+		  }
+		else {
 			webview.loadUrl ("http://www.google.com/search?sclient=tablet-gws&safe=active&site=&source=hp&q=" + webpage + "&oq=" + webpage + "&gs_l=tablet-gws.3..0i131j0l2.18370.26152.0.27669.7.7.0.0.0.0.473.1455.2-1j1j2.4.0..3..0...1c.1.64.tablet-gws..3.4.1453.5pQH1AWhaxo");
 		  }
 
@@ -265,15 +266,15 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			if (url.contains (".mp3")) {
 				Intent intent = new Intent (Intent.ACTION_VIEW); 
 				intent.setDataAndType (Uri.parse (url), "audio/*"); 
-				startActivity(Intent.createChooser(intent, "Open Using...")); 
+				startActivity (Intent.createChooser (intent, "Open Using...")); 
 				return true; 
-				} 
+			  } 
 			else if (url.contains (".mp4") || url.contains (".3gp")) { 
 				Intent intent = new Intent (Intent.ACTION_VIEW); 
 				intent.setDataAndType (Uri.parse (url), "video/*"); 
-				startActivity(Intent.createChooser(intent, "Open Using..."));
+				startActivity (Intent.createChooser (intent, "Open Using..."));
 				return true; 
-				} 
+			  } 
 			else if (url.contains ("youtube.com")) {
 				startActivity (new Intent (Intent.ACTION_VIEW, Uri.parse (url)));
 				return true;
@@ -281,7 +282,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 			if ("about:blank".equals (url) && view.getTag () != null) {
 				view.loadUrl (view.getTag ().toString ()); 
-			  } else { 
+			  }
+			else { 
 				view.setTag (url); 
 			  }
 
@@ -298,7 +300,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			if ("about:blank".equals (url) && goingBack.equals ("true")) {
 				view.goBack ();
 				goingBack = "";
-			  } else if ("about:blank".equals (url) && goingBack.equals ("false")) {
+			  }
+			else if ("about:blank".equals (url) && goingBack.equals ("false")) {
 				view.goForward ();
 				goingBack = "";
 			  }
@@ -310,8 +313,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
 		  {
 			// TODO: Implement this method
-			new AlertDialog.Builder(IncognitoActivity.this).setTitle("Error: "+errorCode).
-			setMessage(description).show();
+			new AlertDialog.Builder (IncognitoActivity.this).setTitle ("Error: " + errorCode).
+			  setMessage (description).show ();
 			super.onReceivedError (view, errorCode, description, failingUrl);
 		  }
 
@@ -362,22 +365,24 @@ public class IncognitoActivity extends Activity implements OnClickListener
 		public void onProgressChanged(WebView view, int newProgress)
 		  {
 			// TODO: Implement this method
-			if(newProgress!=100){
-			  getActionBar().setSubtitle("Loading: "+newProgress+"%");
-			}else{
-				getActionBar().setSubtitle(null);
-			}
+			if (newProgress != 100) {
+				getActionBar ().setSubtitle ("Loading: " + newProgress + "%");
+			  }
+			else {
+				getActionBar ().setSubtitle (null);
+			  }
 			super.onProgressChanged (view, newProgress);
 		  }
 	  }
-	  
+
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	  {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (webview.canGoBack ()) {
 				webview.goBack ();
 				goingBack = "true";
-			  } else {finish ();}
+			  }
+			else {finish ();}
 			return true;
 		  }
 
@@ -426,12 +431,13 @@ public class IncognitoActivity extends Activity implements OnClickListener
 							"\nEmail: shawngrant333@gmail.com").
 				show ();
 			  break;
-			  
+
 			case R.id.ABhide:
-			  if(getActionBar().isShowing()){
-				  getActionBar().hide();
-				}else{
-				  getActionBar().show();
+			  if (getActionBar ().isShowing ()) {
+				  getActionBar ().hide ();
+				}
+			  else {
+				  getActionBar ().show ();
 				}
 			  break;
 		  }
@@ -484,7 +490,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 		for (int i=0;list.length > i;i++) {
 			final String item=list [i];
-			if (item.equals ("")) {} else {
+			if (item.equals ("")) {}
+			else {
 				String [] parts=item.split (" 》 ");
 				String title=parts [0];
 				final String url=parts [1];
@@ -566,8 +573,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 	private void LoadHistory()
 	  {
 		// TODO: Implement this method
-		final AlertDialog ad=new AlertDialog.Builder(this).create();
-	    ListView lv=new ListView(this);
+		final AlertDialog ad=new AlertDialog.Builder (this).create ();
+	    ListView lv=new ListView (this);
 
 		final String[] list=historytxt.split ("\n");
 		final ArrayList<String> titleArray=new ArrayList<String> ();
@@ -577,10 +584,10 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			String item=list [i];
 			if (item.equals ("")) {} 
 			else {
-				String title=item.split(" 》 ")[0];
-				String url=item.split(" 》 ")[1];
+				String title=item.split (" 》 ") [0];
+				String url=item.split (" 》 ") [1];
 				titleArray.add (title);
-				urlArray.add(url);
+				urlArray.add (url);
 			  }
 		  }
 		final ArrayAdapter<String> aa=new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, titleArray);
@@ -592,9 +599,9 @@ public class IncognitoActivity extends Activity implements OnClickListener
 				{
 				  // TODO: Implement this method
 
-				  String i=urlArray.get(p3);
+				  String i=urlArray.get (p3);
 				  webview.loadUrl (i);
-				  ad.dismiss();
+				  ad.dismiss ();
 				}
 			});
 		lv.setOnItemLongClickListener (new OnItemLongClickListener (){
@@ -603,7 +610,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			  public boolean onItemLongClick(final AdapterView<?> p1a, View p2, final int p3, long p4)
 				{
 				  // TODO: Implement this method
-				  final String i=titleArray.get(p3)+" 》 "+urlArray.get(p3);
+				  final String i=titleArray.get (p3) + " 》 " + urlArray.get (p3);
 
 				  new AlertDialog.Builder (IncognitoActivity.this).
 					setTitle ("Remove From History").
@@ -617,7 +624,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 							historytxt = historytxt.replace (i, "");
 							editor.putString ("history", historytxt);
 							editor.commit ();
-							ad.dismiss();
+							ad.dismiss ();
 							LoadHistory ();
 						  }
 					  }).
@@ -630,7 +637,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 							historytxt = "";
 							editor.putString ("history", historytxt);
 							editor.commit ();
-							ad.dismiss();
+							ad.dismiss ();
 							LoadHistory ();
 						  }
 					  }).show ();
@@ -638,8 +645,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 				}
 			});
 
-		ad.setTitle("History");
-		ad.setView(lv);
-		ad.show();
+		ad.setTitle ("History");
+		ad.setView (lv);
+		ad.show ();
 	  }
-}
+  }

@@ -28,6 +28,9 @@
 	<uses-permission
 		android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
 	<application
 		android:allowBackup="true"
 		android:icon="@drawable/icon"
@@ -76,7 +79,7 @@
 
 		<activity
 			android:name=".OTGBrowserActivity"
-			android:label="OTG browser"
+			android:label="Floating Browser"
 			android:theme="@android:style/Theme.Dialog"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 
@@ -171,6 +174,24 @@
 
 				<action
 					android:name="android.intent.action.VIEW_SOURCE"/>
+
+				<category
+					android:name="android.intent.category.DEFAULT"/>
+
+			</intent-filter>
+
+		</activity>
+
+		<activity
+			android:name=".LockScreenActivity"
+			android:label="Lockscreen Browser"
+			android:showOnLockScreen="true"
+			android:configChanges="orientation|keyboardHidden|screenSize">
+
+			<intent-filter>
+
+				<action
+					android:name="android.intent.action.LOCKSCREEN"/>
 
 				<category
 					android:name="android.intent.category.DEFAULT"/>

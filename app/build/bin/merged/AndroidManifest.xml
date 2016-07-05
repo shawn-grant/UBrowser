@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -45,7 +46,7 @@
         <activity
             android:name="com.codecomplete.ubrowser.OTGBrowserActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="OTG browser"
+            android:label="Floating Browser"
             android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <action android:name="android.intent.action.OTG" />
@@ -98,6 +99,17 @@
             android:label="View Source" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_SOURCE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.codecomplete.ubrowser.LockScreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="Lockscreen Browser"
+            android:showOnLockScreen="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKSCREEN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

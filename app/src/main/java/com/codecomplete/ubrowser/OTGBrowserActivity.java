@@ -22,18 +22,22 @@ public class OTGBrowserActivity extends Activity implements OnClickListener
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
+	    getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
 		setContentView(R.layout.otgactivity);
-		getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+		
 		
 		webview = (WebView)findViewById(R.id.otgactivityWebView);
 		
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.getSettings().setLoadWithOverviewMode(true);
-	  webview.getSettings().setBuiltInZoomControls(true);
-	  webview.getSettings().setDisplayZoomControls(false);
-		webview.getSettings().setUseWideViewPort(true);
+	    webview.getSettings().setUseWideViewPort(true);
+	  
+	    webview.getSettings().setBuiltInZoomControls(true);
+	    webview.getSettings().setDisplayZoomControls(false);
+		
 		webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		webview.getSettings().setPluginState(WebSettings.PluginState.ON);
+		
 		webview.setWebViewClient(new mywebclient());
 		webview.setWebChromeClient(new MyWebChromeClient());
 		
@@ -45,8 +49,7 @@ public class OTGBrowserActivity extends Activity implements OnClickListener
 		{
 			webview.loadUrl(url.toString());
 		}else{
-			new AlertDialog.Builder(this).setTitle("Error").setMessage("No new URL specified").show();
-			
+			new AlertDialog.Builder(this).setTitle("Error").setMessage("No new URL specified").show();		
 		}
 	}
 
