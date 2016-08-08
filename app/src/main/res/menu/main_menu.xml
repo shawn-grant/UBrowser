@@ -5,12 +5,13 @@
         android:id="@+id/bookmark"
 		android:icon="@drawable/bookmark"
         android:title="Add Bookmark"/>
-
+	
 	<item
 		android:showAsAction="always"
-        android:id="@+id/code"
-		android:icon="@drawable/code"
-        android:title="Write Code"/>
+		android:id="@+id/history"
+		android:icon="@drawable/history"
+		android:title="History"/>
+	
 
 	<item
 		android:showAsAction="always"
@@ -21,11 +22,6 @@
 				android:id="@+id/incognito"
 				android:icon="@drawable/incognito"
 				android:title="Go incognito"/>
-			
-			<item
-				android:id="@+id/history"
-				android:icon="@drawable/history"
-				android:title="History"/>
 			
 			<item
 				android:id="@+id/viewbookarks"
@@ -41,17 +37,45 @@
 				android:id="@+id/print"
 				android:icon="@drawable/print"
 				android:title="Print Page"/>
+			
+			<item
+				android:id="@+id/savepage"
+				android:icon="@drawable/save"
+				android:title="Save Page"/>
+			
+			<!--DEVELOPER OPTIONS-->
+			<item
+				android:icon="@drawable/dev"
+				android:title="Developers">
+				
+				<menu>
+					<item
+						android:id="@+id/viewsource"
+						android:icon="@drawable/viewsource"
+						android:title="View Source"/>
+
+					<item
+						android:id="@+id/log"
+						android:icon="@drawable/log"
+						android:title="View Log"/>
+					
+					<item
+						android:id="@+id/savehtml"
+						android:icon="@drawable/save"
+						android:title="Save Html"/>
+					
+					<item
+						android:id="@+id/code"
+						android:icon="@drawable/code"
+						android:title="Scratchpad"/>
+				</menu>
+			</item>
 
 			<item
-				android:id="@+id/viewsource"
-				android:icon="@drawable/viewsource"
-				android:title="View Source"/>
-
-			<item
-				android:id="@+id/log"
-				android:icon="@drawable/log"
-				android:title="View Log"/>
-
+				android:id="@+id/share"
+				android:icon="@drawable/share"
+				android:title="Share Page URL"/>
+			
 			<item
 				android:id="@+id/settings"
 				android:icon="@drawable/settings"

@@ -24,13 +24,21 @@
 		android:id="@+id/content">
 
 		
-			<ImageView
-				android:id="@+id/stop"
-				android:src="@drawable/stop"
-				android:onClick="onClick"
-				android:layout_marginRight="10dp"
-				android:layout_width="60dp"
-				android:layout_height="60dp"/>
+		<ImageView
+			android:id="@+id/stop"
+			android:src="@drawable/stop"
+			android:onClick="onClick"
+			android:layout_marginRight="10dp"
+			android:layout_width="60dp"
+			android:layout_height="60dp"/>
+		
+		<ImageView
+			android:id="@+id/info"
+			android:src="@drawable/info"
+			android:onClick="onClick"
+			android:layout_marginRight="5dp"
+			android:layout_width="30dp"
+			android:layout_height="30dp"/>
 
 		<HorizontalScrollView
 			android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ import android.net.*;
 import android.os.*;
 import android.print.*;
 import android.speech.*;
+import android.text.*;
 import android.util.*;
 import android.view.*;
 import android.view.View.*;
@@ -17,15 +18,13 @@ import android.widget.*;
 import android.widget.AdapterView.*;
 import android.widget.TextView.*;
 import com.oguzdev.circularfloatingactionmenu.library.*;
+import com.squareup.picasso.*;
+import org.apache.commons.codec.binary.Base64;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.util.*;
 
+import android.content.ClipboardManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
@@ -42,14 +41,13 @@ public class MainActivity extends Activity implements OnClickListener
 	AlertDialog.Builder log;
 	String logtxt;
 
-	String historytxt,bookmarks;
-
 	private int ID_SAVEIMAGE=1000;
 	private int ID_VIEWIMAGE=2000;
 	private int ID_SAVELINK=3000;
 	private int ID_SHARELINK=4000;
 	private int ID_OPENLINK=5000;
-	private int ID_OPENLINKINFLOAT=6000;
+
+	private int REQUEST_CODE_RESULTS=100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -69,9 +67,6 @@ public class MainActivity extends Activity implements OnClickListener
 
 		webview = (WebView)findViewById (R.id.mainWebView);
 		urlbar = (AutoCompleteTextView)findViewById (R.id.urlbar);
-
-		historytxt = savewebdata.getString ("history", "");
-		bookmarks = savewebdata.getString ("bookmarks", "");
 		goingBack = "";
 
 		log = new AlertDialog.Builder (this);
@@ -83,7 +78,7 @@ public class MainActivity extends Activity implements OnClickListener
 				{
 				  // TODO: Implement this method
 				  logtxt = "";
-				  log.setMessage (logtxt);
+				  log.setView (new TextView (MainActivity.this));
 				}
 			}).setNegativeButton ("Cancel", null);
 
@@ -109,7 +104,6 @@ public class MainActivity extends Activity implements OnClickListener
 		  }
 		webview.setWebViewClient (new mywebclient ());
 		webview.setWebChromeClient (new MyWebChromeClient ());
-		webview.addJavascriptInterface (new JsInterface (), "JSInterface");
 		registerForContextMenu (webview);
 
 		Uri url = getIntent ().getData ();
@@ -125,20 +119,6 @@ public class MainActivity extends Activity implements OnClickListener
 	private void setUrlBarControl()
 	  {
 		// TODO: Implement this method
-		final String[] list=historytxt.split ("\n");
-		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_dropdown_item_1line, list);
-		urlbar.setAdapter (adapter);
-		urlbar.setOnItemClickListener (new OnItemClickListener (){
-
-			  @Override
-			  public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
-				{
-				  // TODO: Implement this method
-				  String new_url=list [p3].split (" 》 ") [1];
-				  Search (new_url);
-				}
-			});
-
 		//search on enter pressed
 		urlbar.setOnEditorActionListener (new OnEditorActionListener (){
 			  @Override
@@ -196,7 +176,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	public void Search(String webpage)
 	  {
-		
+
 		if (URLUtil.isValidUrl (webpage)) {
 			webview.loadUrl (webpage);
 		  }
@@ -222,44 +202,7 @@ public class MainActivity extends Activity implements OnClickListener
 				switch (item.getItemId ()) {
 					  //SAVE IMAGE
 					case 1000:
-					  try {
-						  HttpClient httpclient = new DefaultHttpClient ();
-						  HttpGet httpget = new HttpGet (result.getExtra ()); 
-						  HttpResponse response = httpclient.execute (httpget); 
-						  HttpEntity entity = response.getEntity (); 
-
-						  if (entity != null) { 
-							  URL url = new URL (result.getExtra ()); 
-							  //Grabs the file part of the URL string 
-							  String fileName = url.getFile (); 
-							  //Make sure we are grabbing just the filename 
-							  int index = fileName.lastIndexOf ("/"); 
-							  if (index >= 0) fileName = fileName.substring (index); 
-							  //Create a temporary file 
-							  File tempFile = new File (Environment.getExternalStorageDirectory (), fileName); 
-
-							  if (!tempFile.exists ()) tempFile.createNewFile (); 
-							  InputStream instream = entity.getContent (); 
-							  BufferedInputStream bufferedInputStream = new BufferedInputStream (instream); 
-							  //Read bytes into the buffer 
-							  ByteArrayBuffer buffer = new ByteArrayBuffer (50); 
-							  int current = 0; 
-
-							  while ((current = bufferedInputStream.read ()) != -1) { 
-								  buffer.append ((byte) current); 
-								}
-							  //Write the buffer to the file 
-							  FileOutputStream stream = new FileOutputStream (tempFile); 
-							  stream.write (buffer.toByteArray ()); 
-							  stream.close ();
-							  Toast.makeText (MainActivity.this, "Saved", 2000).show ();
-							}
-						}
-					  catch (IOException e) {
-						  e.printStackTrace ();
-						  Toast.makeText (MainActivity.this, "Failed", 2000).show ();
-						}
-
+					  SaveImage (result.getExtra ());
 					  break;
 
 					  //VIEW IMAGE
@@ -272,7 +215,7 @@ public class MainActivity extends Activity implements OnClickListener
 					  ClipboardManager clipboard = (ClipboardManager) getSystemService (CLIPBOARD_SERVICE); 
 					  ClipData clip = ClipData.newPlainText (result.getExtra (), result.getExtra ()); 
 					  clipboard.setPrimaryClip (clip);
-					  Toast.makeText (MainActivity.this, "Saved", 2000).show ();
+					  Toast.makeText (MainActivity.this, "Copied to ClipBoard", 2000).show ();
 					  break;
 
 					  //SHARE LINK
@@ -288,33 +231,26 @@ public class MainActivity extends Activity implements OnClickListener
 					case 5000:
 					  webview.loadUrl (result.getExtra ());
 					  break;
-
-					  //OPEN LINK IN FLOATING TAB
-					case 6000:
-					  Intent openInOtg=new Intent ("android.intent.action.OTG");
-					  openInOtg.setData (Uri.parse (result.getExtra ()));
-					  startActivity (openInOtg);
-					  break;
 				  }
 			    return true; 
 			  } 
 		  }; 
 
+		//if image
 		if (result.getType () == WebView.HitTestResult.IMAGE_TYPE || result.getType () == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-			// Menu options for an image. 
-			//set the header title to the image url 
+			// Menu options for an image.
 			menu.setHeaderTitle (result.getExtra ());
 			menu.add (0, ID_SAVEIMAGE, 0, "Save Image").setOnMenuItemClickListener (handler); 
-			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SAVELINK, 0, "Copy Image URL").setOnMenuItemClickListener (handler); 
 		  }
+		//if hyperlink
 		else if (result.getType () == WebView.HitTestResult.ANCHOR_TYPE || result.getType () == WebView.HitTestResult.SRC_ANCHOR_TYPE) { 
-			// Menu options for a hyperlink. 
-			//set the header title to the link url 
+			// Menu options for a hyperlink.
 			menu.setHeaderTitle (result.getExtra ()); 
 			menu.add (0, ID_SAVELINK, 0, "Save Link").setOnMenuItemClickListener (handler); 
 			menu.add (0, ID_SHARELINK, 0, "Share Link").setOnMenuItemClickListener (handler);
 			menu.add (0, ID_OPENLINK, 0, "Open").setOnMenuItemClickListener (handler);
-			menu.add (0, ID_OPENLINKINFLOAT, 0, "Open in Floating Browser").setOnMenuItemClickListener (handler);
 		  } 
 	  }
 
@@ -347,11 +283,15 @@ public class MainActivity extends Activity implements OnClickListener
 			  break;
 
 			case R.id.history:			
-			  LoadHistory ();
+			  Intent historyIntent = new Intent ("android.intent.action.GET_RESULT");
+			  historyIntent.putExtra ("type", "history");
+			  startActivityForResult (historyIntent, REQUEST_CODE_RESULTS);
 			  break;
 
 			case R.id.viewbookarks:
-			  LoadBookmarks ();
+			  Intent bookmarksIntent = new Intent ("android.intent.action.GET_RESULT");
+			  bookmarksIntent.putExtra ("type", "bookmarks");
+			  startActivityForResult (bookmarksIntent, REQUEST_CODE_RESULTS);
 			  break;
 
 			case R.id.quickload:			
@@ -362,13 +302,35 @@ public class MainActivity extends Activity implements OnClickListener
 			  printWebDoc ();
 			  break;
 
-			case R.id.viewsource:	
-			  webview.loadUrl ("javascript:JSInterface.sendHtml(document.getElementsByTagName('html')[0].innerHTML);");
+			case R.id.viewsource:
+			  GetHtml html = new GetHtml ();
+			  String content = html.getHtml (webview.getUrl ());
+			  Intent i=new Intent ("android.intent.action.VIEW_SOURCE");
+			  i.putExtra ("html", content);
+			  startActivity (i);
 			  break;
 
 			case R.id.log:
-			  log.setMessage (logtxt);
+			  TextView tv=new TextView (this);
+			  tv.setText (logtxt, TextView.BufferType.SPANNABLE);
+			  log.setView (tv);
 			  log.show ();
+			  break;
+
+			case R.id.savehtml:
+			  SaveHtml ();
+			  break;
+
+			case R.id.share:
+			  Intent intent = new Intent (Intent.ACTION_SEND); 
+			  intent.setType ("text/plain"); 
+			  intent.putExtra (Intent.EXTRA_TEXT, webview.getUrl ()); 
+			  intent.putExtra (Intent.EXTRA_SUBJECT, "Check out this site!");
+			  startActivity (Intent.createChooser (intent, "Share Via..."));
+			  break;
+
+		    case R.id.savepage:
+			  SavePage ();
 			  break;
 
 			case R.id.settings:		
@@ -413,13 +375,23 @@ public class MainActivity extends Activity implements OnClickListener
 			  public void onClick(DialogInterface p1, int p2)
 				{
 				  // TODO: Implement this method
-				  if (bookmarkname.getText ().toString ().isEmpty () == false)
-					bookmarks += bookmarkname.getText ().toString () + " 》 " + url + "\n";
+				  String bookmark;
+				  if (!bookmarkname.getText ().toString ().isEmpty ())
+					bookmark = bookmarkname.getText ().toString () + " 》 " + url;
 				  else
-					bookmarks += webview.getTitle () + " 》 " + url + "\n";
+					bookmark = getActionBar ().getTitle () + " 》 " + url;
 
-				  editor.putString ("bookmarks", bookmarks);
-				  editor.commit ();
+				  try {
+					  File file = new File (getFilesDir () + "/bookmarks.dat");
+					  if (!file.exists ())file.createNewFile ();
+
+					  BufferedWriter bufferedWriter = new BufferedWriter (new FileWriter (file, true));
+					  bufferedWriter.write ("\n" + bookmark);
+					  bufferedWriter.close ();
+					}
+				  catch (IOException e) {
+					  e.printStackTrace ();
+					}
 				}
 			}).setNegativeButton ("Cancel", new DialogInterface.OnClickListener (){
 
@@ -433,96 +405,6 @@ public class MainActivity extends Activity implements OnClickListener
 		  show ();
 	  }
 
-	public void LoadBookmarks()
-	  {
-		String[] list=bookmarks.split ("\n");
-		final Dialog bookmark=new Dialog (this);
-		bookmark.setTitle ("Bookmarks");
-		bookmark.setContentView (R.layout.bookmarks);
-		LinearLayout bookmarkll=(LinearLayout) bookmark.findViewById (R.id.bookmarksLayout);
-
-		for (int i=0;list.length > i;i++) {
-			final String item=list [i];
-			if (item.equals ("")) {}
-			else {
-				String [] parts=item.split (" 》 ");
-				String title=parts [0];
-				final String url=parts [1];
-
-				ImageView iv=new ImageView (this);
-				TextView tv=new TextView (this);
-
-				iv.setImageResource (R.drawable.icon);
-				tv.setTextColor (Color.BLUE);
-				tv.setTextSize (30);
-				tv.setText (title);
-
-				LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams (LinearLayout.LayoutParams.FILL_PARENT,
-																			LinearLayout.LayoutParams.FILL_PARENT);
-				lp.setMargins (0, 0, 0, 10);
-				LinearLayout ll=new LinearLayout (this);
-				ll.setOrientation (LinearLayout.VERTICAL);
-				ll.setBackgroundColor (Color.BLACK);
-				ll.setLayoutParams (lp);
-				ll.addView (iv, 100, 100);
-				ll.addView (tv, new LinearLayout.LayoutParams (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-				bookmarkll.addView (ll);
-
-				ll.setOnClickListener (new OnClickListener (){
-
-					  @Override
-					  public void onClick(View p1)
-						{
-						  // TODO: Implement this method
-						  webview.loadUrl (url);
-						  bookmark.dismiss ();
-						}
-					});
-
-				ll.setOnLongClickListener (new OnLongClickListener (){
-
-					  @Override
-					  public boolean onLongClick(View p1)
-						{
-						  // TODO: Implement this method
-						  new AlertDialog.Builder (MainActivity.this).
-							setTitle ("Remove From Bookmarks").
-							setMessage ("Do you want to remove this item?").
-							setPositiveButton ("Remove", new DialogInterface.OnClickListener (){
-
-								@Override
-								public void onClick(DialogInterface p1, int p2)
-								  {
-									// TODO: Implement this method
-									bookmarks = bookmarks.replace (item, "");
-									editor.putString ("bookmarks", bookmarks);
-									editor.commit ();
-									bookmark.dismiss ();
-									LoadBookmarks ();
-								  }
-							  }).
-							setNegativeButton ("Remove All", new DialogInterface.OnClickListener (){
-
-								@Override
-								public void onClick(DialogInterface p1, int p2)
-								  {
-									// TODO: Implement this method
-									bookmarks = "";
-									editor.putString ("bookmarks", bookmarks);
-									editor.commit ();
-									bookmark.dismiss ();
-									LoadBookmarks ();
-								  }
-							  }).show ();
-						  return true;
-						}
-					});
-			  }
-		  }
-
-		bookmark.show ();
-	  }
-
 	private void SpeedDial()
 	  {
 		// TODO: Implement this method
@@ -533,9 +415,8 @@ public class MainActivity extends Activity implements OnClickListener
 		a.add ("http://facebook.com");
 		a.add ("http://youtube.com");
 		a.add ("http://yahoo.com");
+		a.add ("http://stackoverflow.com");
 		a.add ("http://gmail.com");
-		a.add ("http://jutc.com");
-		a.add ("http://twitter.com");
 		a.add ("http://microsoft.com");
 		a.add ("http://omegarenovation.ca");
 		a.add ("http://translate.google.com");
@@ -560,84 +441,19 @@ public class MainActivity extends Activity implements OnClickListener
 		ad.setView (l);ad.show ();
 	  }
 
-	private void LoadHistory()
+	public void appendHistory(String newEntry)
 	  {
-		// TODO: Implement this method
-		final AlertDialog ad=new AlertDialog.Builder (this).create ();
-	    ListView lv=new ListView (this);
+		try {
+			File file = new File (getFilesDir () + "/history.dat");
+			if (!file.exists ())file.createNewFile ();
 
-		final String[] list=historytxt.split ("\n");
-		final ArrayList<String> titleArray=new ArrayList<String> ();
-		final ArrayList<String> urlArray=new ArrayList<String> ();
-
-		for (int i=0;i < list.length;i++) {
-			String item=list [i];
-			if (item.equals ("")) {}
-			else {
-				String title=item.split (" 》 ") [0];
-				String url=item.split (" 》 ") [1];
-				titleArray.add (title);
-				urlArray.add (url);
-			  }
+			BufferedWriter bufferedWriter = new BufferedWriter (new FileWriter (file, true));
+			bufferedWriter.write ("\n" + newEntry);
+			bufferedWriter.close ();
 		  }
-		final ArrayAdapter<String> aa=new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, titleArray);
-		lv.setAdapter (aa);
-		lv.setOnItemClickListener (new OnItemClickListener (){
-
-			  @Override
-			  public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4)
-				{
-				  // TODO: Implement this method
-
-				  String i=urlArray.get (p3);
-				  webview.loadUrl (i);
-				  ad.dismiss ();
-				}
-			});
-		lv.setOnItemLongClickListener (new OnItemLongClickListener (){
-
-			  @Override
-			  public boolean onItemLongClick(final AdapterView<?> p1a, View p2, final int p3, long p4)
-				{
-				  // TODO: Implement this method
-				  final String i=titleArray.get (p3) + " 》 " + urlArray.get (p3);
-
-				  new AlertDialog.Builder (MainActivity.this).
-					setTitle ("Remove From History").
-					setMessage ("Do you want to remove this item?").
-					setPositiveButton ("Remove", new DialogInterface.OnClickListener (){
-
-						@Override
-						public void onClick(DialogInterface p1, int p2)
-						  {
-							// TODO: Implement this method
-							historytxt = historytxt.replace (i, "");
-							editor.putString ("history", historytxt);
-							editor.commit ();
-							ad.dismiss ();
-							LoadHistory ();
-						  }
-					  }).
-					setNegativeButton ("Remove All", new DialogInterface.OnClickListener (){
-
-						@Override
-						public void onClick(DialogInterface p1, int p2)
-						  {
-							// TODO: Implement this method
-							historytxt = "";
-							editor.putString ("history", historytxt);
-							editor.commit ();
-							ad.dismiss ();
-							LoadHistory ();
-						  }
-					  }).show ();
-				  return true;
-				}
-			});
-
-		ad.setTitle ("History");
-		ad.setView (lv);
-		ad.show ();
+		catch (IOException e) {
+			e.printStackTrace ();
+		  }
 	  }
 
 	public void printWebDoc()
@@ -656,7 +472,7 @@ public class MainActivity extends Activity implements OnClickListener
 		else {
 			new AlertDialog.Builder (this).
 			  setTitle ("Printing Error").
-			  setMessage ("Unable to print the document.\nThis only supported on Android Kitkat(API 19) and higher").show ();
+			  setMessage ("Unable to print the document.\nThis is only supported on Android Kitkat(API 19) and higher").show ();
 		  }
 	  }
 
@@ -667,17 +483,12 @@ public class MainActivity extends Activity implements OnClickListener
 		switch (p1.getId ()) {
 			case 1:
 			  webview.goBack ();
-			  slider.animateClose ();
-			  Toast.makeText (getApplicationContext (), "...going back...", 
-							  Toast.LENGTH_LONG).show ();
 			  goingBack = "true";
 			  break;
 
 			case 2:
 			  webview.goForward ();
 			  slider.animateClose ();
-			  Toast.makeText (getApplicationContext (), "...going forward...", 
-							  Toast.LENGTH_LONG).show ();
 			  goingBack = "false";
 			  break;
 
@@ -697,9 +508,19 @@ public class MainActivity extends Activity implements OnClickListener
 
 			case R.id.stop:
 			  webview.stopLoading ();
-			  slider.animateClose ();
-			  Toast.makeText (getApplicationContext (), "...stopping...", 
+			  Toast.makeText (getApplicationContext (), "stopping", 
 							  Toast.LENGTH_LONG).show ();
+			  break;
+
+			case R.id.info:
+			  try {
+				  new AlertDialog.Builder (this).
+					setTitle (new URL (webview.getUrl ()).getHost ()).
+					setMessage ("Url: " + webview.getUrl () +
+								"\nTitle: " + webview.getTitle () +
+								"\nUri Scheme: " + new URL (webview.getUrl ()).getProtocol ()).show ();
+				}
+			  catch (MalformedURLException e) {}
 			  break;
 		  }
 	  }
@@ -712,6 +533,9 @@ public class MainActivity extends Activity implements OnClickListener
 				ArrayList<String> matches = data.getStringArrayListExtra (RecognizerIntent.EXTRA_RESULTS);
 				String words=matches.get (0);
 				Search (words);
+			  }
+			else if (requestCode == REQUEST_CODE_RESULTS) {
+				webview.loadUrl (data.getExtras ().getString ("result"));
 			  }
 		  }
 		super.onActivityResult (requestCode, resultCode, data);
@@ -777,12 +601,7 @@ public class MainActivity extends Activity implements OnClickListener
 				goingBack = "";
 			  }
 
-			if (view.getTitle () != null) {
-				historytxt += view.getTitle ().toUpperCase () + " 》 " + url + "\n";
-			  }
-
-			editor.putString ("history", historytxt);
-			editor.commit ();
+			appendHistory (view.getTitle () + " 》 " + url);
 			super.onPageFinished (view, url);
 		  }
 
@@ -856,33 +675,177 @@ public class MainActivity extends Activity implements OnClickListener
 		public boolean onConsoleMessage(ConsoleMessage consoleMessage)
 		  {
 			// TODO: Implement this method
-			String logmessage=consoleMessage.message ();
-			logtxt += logmessage + "\n";
+
+			if (consoleMessage.messageLevel () == ConsoleMessage.MessageLevel.LOG) {
+				String styledText = "<font color='gray'>" + consoleMessage.message () + "</font><br>"; 
+				logtxt += Html.fromHtml (styledText);		
+			  }
+			else if (consoleMessage.messageLevel () == ConsoleMessage.MessageLevel.WARNING) {
+				String styledText = "<font color='yellow'>" + consoleMessage.message () + "</font><br>"; 
+				logtxt += Html.fromHtml (styledText);		
+			  }
+			else if (consoleMessage.messageLevel () == ConsoleMessage.MessageLevel.ERROR) {
+				String styledText = "<font color='red'>" + consoleMessage.message () + "</font><br>"; 
+				logtxt += Html.fromHtml (styledText);		
+			  }
+
 			return super.onConsoleMessage (consoleMessage);
 		  }
 
 	  }
 
-	public class JsInterface
+	public void SaveImage(String url)
 	  {
-		Context context;
+		Toast.makeText (MainActivity.this, "Starting Download", 2000).show ();
 
-		public void JsInterface(Context c)
-		  {
-			context = c;
+		if (url.startsWith ("data:image/")) {
+			String encodingPrefix = "base64,";
+			int contentStartIndex = url.indexOf (encodingPrefix) + encodingPrefix.length ();
+			byte[] imageData = Base64.decodeBase64 (url.substring (contentStartIndex).getBytes ());
+
+			Bitmap bmp = BitmapFactory.decodeByteArray (imageData, 0, imageData.length);
+			FileOutputStream fos = null; 
+
+			try { 
+				String root = Environment.getExternalStorageDirectory ().toString (); 
+				File myDir = new File (root + "/Download");
+				if (!myDir.exists ()) { 
+					myDir.mkdirs ();
+				  } 
+				String name = new Date ().toString () + ".jpg"; 
+				myDir = new File (myDir, name); 
+
+
+				fos = new FileOutputStream (myDir); 
+				if (fos != null) { 
+					bmp.compress (Bitmap.CompressFormat.JPEG, 90, fos); 
+					fos.close (); 
+				  }
+				Toast.makeText (MainActivity.this, "Saved as " + myDir.getPath (), 2000).show ();
+			  }
+			catch ( Exception e ) { 
+				e.printStackTrace ();
+				Toast.makeText (MainActivity.this, "Failed", 2000).show ();
+			  } 
 		  }
+		else {
+			Picasso.
+			  with (this) .
+			  load (url) .
+			  into (new Target () { 
+				  @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from)
+					{ 
+					  try { 
+						  String root = Environment.getExternalStorageDirectory ().toString (); 
+						  File myDir = new File (root + "/Download");
+						  if (!myDir.exists ()) { 
+							  myDir.mkdirs ();
+							} 
+						  String name = new Date ().toString () + ".jpg"; 
+						  myDir = new File (myDir, name); 
+						  FileOutputStream out = new FileOutputStream (myDir); 
+						  bitmap.compress (Bitmap.CompressFormat.JPEG, 90, out); 
+						  out.flush (); 
+						  out.close ();
+						  Toast.makeText (MainActivity.this, "Saved as " + myDir.getPath (), 2000).show ();
+						}
+					  catch (Exception e) { 
+						  e.printStackTrace ();
+						} 
+					} 
+				  @Override 
+				  public void onBitmapFailed(Drawable errorDrawable)
+					{
+					  Toast.makeText (MainActivity.this, "Download Failed", 2000).show ();
+					} 
 
-		@JavascriptInterface
-		public void sendHtml(String html)
-		  {
-			Log.d ("PageSource", html);
-			Intent i=new Intent ("android.intent.action.VIEW_SOURCE");
-			i.putExtra ("source", html);
-			i.putExtra ("url", webview.getUrl ());
-			Log.d ("ViewSource", "Intent sent");
-			startActivity (i);
+				  @Override 
+				  public void onPrepareLoad(Drawable placeHolderDrawable)
+					{ } 
+				});
 		  }
 	  }
+
+	public void SavePage()
+	  {
+		Toast.makeText (MainActivity.this, "Starting Download", 2000).show ();
+		Picture picture = webview.capturePicture (); 
+		Bitmap b = Bitmap.createBitmap (picture.getWidth (), picture.getHeight (), Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas (b); 
+		picture.draw (c); 
+		FileOutputStream fos = null; 
+
+		try { 
+
+			String root = Environment.getExternalStorageDirectory ().toString (); 
+			File myDir = new File (root + "/UBrowser/Pages");
+			if (!myDir.exists ()) { 
+				myDir.mkdirs ();
+			  } 
+			String name = "Page" + new Date ().toString () + ".jpg"; 
+			myDir = new File (myDir, name); 
+
+
+			fos = new FileOutputStream (myDir); 
+			if (fos != null) { 
+				b.compress (Bitmap.CompressFormat.JPEG, 90, fos); 
+				fos.close (); 
+			  }
+			Toast.makeText (MainActivity.this, "Saved as " + myDir.getPath (), 2000).show ();
+		  }
+		catch ( Exception e ) { 
+			e.printStackTrace ();
+			Toast.makeText (MainActivity.this, "Failed", 2000).show ();
+		  } 
+
+	  }
+
+	public void SaveHtml()
+	  {
+		final EditText et= new EditText (this);
+		et.setHint ("Enter a file name (without extension)");
+		new AlertDialog.Builder (this).
+		  setTitle ("SAVE AS").setView (et).
+		  setPositiveButton ("Save", new DialogInterface.OnClickListener (){
+
+			  @Override
+			  public void onClick(DialogInterface p1, int p2)
+				{
+				  // TODO: Implement this method
+				  Toast.makeText (MainActivity.this, "Starting Download", 2000).show ();
+				  String givenName=et.getText ().toString ();
+				  GetHtml html= new GetHtml ();
+				  try {
+					  //GETTING HTML CONTENT
+					  String content = html.getHtml (webview.getUrl ());
+
+					  //SAVING TO A .HTML FILE
+					  String root = Environment.getExternalStorageDirectory ().toString ();
+					  File myDir= new File (root + "/UBrowser/HTML");
+					  if (!myDir.exists ()) {
+						  myDir.mkdirs ();
+						}
+
+					  String name= givenName + ".html";
+					  File file = new File (myDir, name);
+					  FileWriter writer = new FileWriter (file);
+					  writer.write (content);
+					  writer.flush ();
+					  writer.close ();
+					  Toast.makeText (MainActivity.this, "Saved as " + myDir.getPath (), Toast.LENGTH_SHORT).show ();
+					}
+				  catch (IOException e) {
+					  e.printStackTrace ();
+					  Toast.makeText (MainActivity.this, "Failed", Toast.LENGTH_SHORT).show ();
+					}
+				  catch ( Exception e ) { 
+					  e.printStackTrace ();
+					  Toast.makeText (MainActivity.this, "Couldn't receive HTML content", Toast.LENGTH_SHORT).show ();
+					}
+				}
+			}).show ();		
+	  }
+
 
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	  {

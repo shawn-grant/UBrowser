@@ -1,0 +1,34 @@
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:id="@+id/resultsViewFlipper">
+	
+	<!--HISTORY INDEX 0-->
+	<ListView
+		android:id="@+id/historyListView"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"/>
+	
+	<!--BOOKMARKS INDEX 1-->
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<LinearLayout
+			android:id="@+id/bookmarksLinearLayout"
+			android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"/>
+	</ScrollView>
+	
+	<!--SAVED PAGES INDEX 2-->
+	<HorizontalScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<LinearLayout
+			android:id="@+id/pagesLinearLayout"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"/>
+	</HorizontalScrollView>
+	
+</ViewFlipper>

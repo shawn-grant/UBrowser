@@ -4,12 +4,10 @@
 	android:installLocation="preferExternal">
 
 	<uses-permission android:name="android.permission.INTERNET"/>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -30,26 +28,6 @@
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.WEB_SEARCH" />
-
-				<category android:name="android.intent.category.DEFAULT" /> 
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<data android:scheme="http" /> 
-				<data android:scheme="https" />
-            </intent-filter>
-        </activity>
-
-		<activity
-            android:name=".OTGBrowserActivity"
-            android:label="Floating Browser" 
-			android:theme="@android:style/Theme.Dialog" 
-			android:configChanges="orientation|keyboardHidden|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.OTG" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
 
 				<category android:name="android.intent.category.DEFAULT" /> 
 				<category android:name="android.intent.category.BROWSABLE"/>
@@ -103,12 +81,11 @@
         </activity>
 		
 		<activity
-			android:name=".LockScreenActivity"
-			android:label="Lockscreen Browser"
-			android:showOnLockScreen="true"
+			android:name=".ResultsActivity"
+			android:label="--"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
-				<action android:name="android.intent.action.LOCKSCREEN" />
+				<action android:name="android.intent.action.GET_RESULT" />
 
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>

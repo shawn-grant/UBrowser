@@ -5,61 +5,46 @@ import android.content.*;
 import android.os.*;
 import android.util.*;
 import android.webkit.*;
+import android.widget.*;
+import android.text.*;
 
 public class SourceViewer extends Activity
   {
-	String source;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	  {
 		// TODO: Implement this method
 		super.onCreate (savedInstanceState);
-		setContentView(R.layout.view_source);
-		
-		Bundle bundle=getIntent().getExtras();
-		
-		WebView view= (WebView) findViewById(R.id.view_source_WebView);
-		view.getSettings().setJavaScriptEnabled(true);
-		view.getSettings().setLoadWithOverviewMode(true);
-		view.addJavascriptInterface (new JsInterface (), "JSInterface");
+		SharedPreferences savewebdata = getSharedPreferences ("savewebdata", Context.MODE_PRIVATE);
 
-		view.setWebViewClient(new WebViewClient(){
+		if (savewebdata.getBoolean ("DarkTheme", false)) {
+			setTheme (R.style.DarkTheme);
+		  }
+		setContentView (R.layout.webview_solo);
+
+		final Bundle bundle=getIntent ().getExtras ();
+
+		WebView view= (WebView) findViewById (R.id.solo_WebView);
+		view.getSettings ().setJavaScriptEnabled (true);
+		view.getSettings ().setLoadWithOverviewMode (true);
+
+		view.setWebViewClient (new WebViewClient (){
 			  @Override
 			  public boolean shouldOverrideUrlLoading(WebView view, String url)
 				{
 				  // TODO: Implement this method
 				  view.loadUrl (url);
 				  return true;
-				}			 
-			});
+				}
+		});
 		
-		if(bundle!=null){
-		  source=bundle.getString("source");
-		  String title="View Source: "+bundle.getString("url");
-		  getActionBar().setTitle(title);
-		  view.loadUrl("file:///android_asset/view-source.html");
-		}
-		else{
-		  Log.d("source","Undefined");
-		}
+		if (bundle != null) {
+			String htmlSource = (String) bundle.get ("html");
+			String htmlData ="<!doctype html><html><body><pre><code>" + htmlSource +"</code></pre></body></html>";
+			view.loadData(htmlData, "text/html", "utf-8");
+		  }
 		
 	  }
-	  
-	public class JsInterface
-	  {
-		Context context;
 
-		public void JsInterface(Context c)
-		  {
-			context = c;
-		  }
-
-		@JavascriptInterface
-		public String getHtml(){
-		  
-		  return source;
-		}
-		}
-  
-}
+  }
