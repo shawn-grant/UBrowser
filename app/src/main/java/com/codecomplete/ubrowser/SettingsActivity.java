@@ -12,7 +12,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 
 	SharedPreferences prefs;
 	SharedPreferences.Editor editor;
-	Switch theme,overview,javascript,plugins;
+	Switch theme, overview, javascript, plugins, incog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +32,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 		overview = (Switch) findViewById (R.id.overviewSwitch);
 		javascript = (Switch) findViewById (R.id.javascriptSwitch);
 		plugins = (Switch) findViewById (R.id.pluginsSwitch);
+		incog= (Switch) findViewById(R.id.incoghistorySwitch);
 		
 		setState ();
 
@@ -43,6 +44,8 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 		javascript.setOnCheckedChangeListener (this);
 		//switch4
 		plugins.setOnCheckedChangeListener (this);
+		//switch5
+		incog.setOnCheckedChangeListener (this);
 	  }
 
 	public void setState()
@@ -51,6 +54,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 		overview.setChecked (prefs.getBoolean ("Overview", true));
 		javascript.setChecked (prefs.getBoolean ("Javascript", true));
 		plugins.setChecked (prefs.getBoolean ("Plugins", true));
+		incog.setChecked (prefs.getBoolean ("incogHistory", false));
 	  }
 
 	@Override
@@ -80,6 +84,10 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 			case R.id.pluginsSwitch:
 			  editor.putBoolean ("Plugins", p2);
 			  break;
+			  
+			case R.id.incoghistorySwitch:
+			  editor.putBoolean ("incogHistory", p2);
+			  break;
 		  }
 	  }
 
@@ -92,6 +100,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 		editor.putBoolean ("Overview", overview.isChecked());
 		editor.putBoolean ("Javascript", javascript.isChecked());
 		editor.putBoolean ("Plugins", plugins.isChecked());
+		editor.putBoolean ("incogHistory", incog.isChecked());
 		editor.commit ();
 	  }
 

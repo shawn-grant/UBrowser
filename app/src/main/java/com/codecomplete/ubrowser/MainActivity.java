@@ -310,6 +310,12 @@ public class MainActivity extends Activity implements OnClickListener
 			  startActivity (i);
 			  break;
 
+			case R.id.domEdit:
+			  Intent dom= new Intent ("android.intent.action.DOM");
+			  dom.putExtra ("url", webview.getUrl ());
+			  startActivity (dom);
+			  break;
+
 			case R.id.log:
 			  TextView tv=new TextView (this);
 			  tv.setText (logtxt, TextView.BufferType.SPANNABLE);

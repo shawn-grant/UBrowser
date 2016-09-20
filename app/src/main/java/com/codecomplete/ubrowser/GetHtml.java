@@ -1,34 +1,35 @@
 package com.codecomplete.ubrowser;
 
 import android.os.*;
-import android.util.*;
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.*;
+import android.util.*;
 
 public class GetHtml
   {
-	public void GetHtml(){
-	  
-	}
-	
+	public void GetHtml()
+	  {
+
+	  }
+
 	public String getHtml(String urlToRead)
 	  {
 		String html = null;
-		
+
 		try {
 			html = new MyTask ().execute (urlToRead).get ();
 		  }
 		catch (ExecutionException e) {
-		  e.printStackTrace();
-		}
+			e.printStackTrace ();
+		  }
 		catch (InterruptedException e) {
-		  e.printStackTrace();
-		}
-		
+			e.printStackTrace ();
+		  }
+
 		return html;
 	  }
-	  
+
 	public class MyTask extends AsyncTask<String, Void, String>
 	  {
 
@@ -36,34 +37,43 @@ public class GetHtml
 		protected String doInBackground(String[] p1)
 		  {
 			// TODO: Implement this method
-			URL url; // The URL to read
-			HttpURLConnection conn; // The actual connection to the web page
-			BufferedReader rd; // Used to read results from the web page
-			String line; // An individual line of the web page HTML
-			String result = ""; // A long string containing all the HTML
+			String content = "";
+			URL url; 
+			InputStream is = null; 
+			BufferedReader br; 
+			String line; 
+			try { 
+				url = new URL (p1[0]); 
+				is = url.openStream (); // throws an IOException 
+				br = new BufferedReader (new InputStreamReader (is)); 
 
-			try {
-				url = new URL (p1[0]);
-				conn = (HttpURLConnection) url.openConnection ();
-				conn.setRequestMethod ("GET");
-				rd = new BufferedReader (new InputStreamReader (conn.getInputStream ()));
-
-				while ((line = rd.readLine ()) != null) {
-					result += line;
+				while ((line = br.readLine ()) != null) { 
+					System.out.println (line);
+					content+=line+"\n";
+				  } 
+			  } 
+			catch (MalformedURLException e) {
+				e.printStackTrace (); 
+			  }
+			catch (IOException e) {
+				e.printStackTrace (); 
+			  } 
+			finally { 
+				try { 
+					if (is != null) is.close (); 
 				  }
-				rd.close ();
-				Log.d("GetHtml",result);
-			  }
-			catch (Exception e) {
-				e.printStackTrace ();
-				Log.d("GetHtml","problem");
-			  }
-			return result;
-		  }
-	  
-	}
+				catch (IOException e) {
+				    e.printStackTrace();
+				  } 
+			  } 
 
-	
+			Log.d("HTMLContent", content);
+			return content;
+		  }
+
+	  }
+
+
   }
 
 

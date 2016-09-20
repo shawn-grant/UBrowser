@@ -44,7 +44,6 @@ public class IncognitoActivity extends Activity implements OnClickListener
 	private int ID_SAVELINK=3000;
 	private int ID_SHARELINK=4000;
 	private int ID_OPENLINK=5000;
-	private int ID_OPENLINKINFLOAT=6000;
 
 	private int REQUEST_CODE_RESULTS=100;
 	
@@ -221,7 +220,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 					  android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService (CLIPBOARD_SERVICE); 
 					  ClipData clip = ClipData.newPlainText (result.getExtra (), result.getExtra ()); 
 					  clipboard.setPrimaryClip (clip);
-					  Toast.makeText (IncognitoActivity.this, "Saved", 2000).show ();
+					  Toast.makeText (IncognitoActivity.this, "Copied to clipBoard", 2000).show ();
 					  break;
 
 					  //SHARE LINK
@@ -237,13 +236,6 @@ public class IncognitoActivity extends Activity implements OnClickListener
 					case 5000:
 					  webview.loadUrl (result.getExtra ());
 					  break;
-
-					  //OPEN LINK IN FLOATING TAB
-					case 6000:
-					  Intent openInOtg=new Intent ("android.intent.action.OTG");
-					  openInOtg.setData (Uri.parse (result.getExtra ()));
-					  startActivity (openInOtg);
-					  break;
 				  }
 			    return true; 
 			  } 
@@ -254,7 +246,8 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			// Menu options for an image.
 			menu.setHeaderTitle (result.getExtra ());
 			menu.add (0, ID_SAVEIMAGE, 0, "Save Image").setOnMenuItemClickListener (handler); 
-			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SAVELINK, 0, "Copy image URL").setOnMenuItemClickListener (handler); 
 		  }
 		//if hyperlink
 		else if (result.getType () == WebView.HitTestResult.ANCHOR_TYPE || result.getType () == WebView.HitTestResult.SRC_ANCHOR_TYPE) { 
@@ -263,7 +256,6 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			menu.add (0, ID_SAVELINK, 0, "Save Link").setOnMenuItemClickListener (handler); 
 			menu.add (0, ID_SHARELINK, 0, "Share Link").setOnMenuItemClickListener (handler);
 			menu.add (0, ID_OPENLINK, 0, "Open").setOnMenuItemClickListener (handler);
-			menu.add (0, ID_OPENLINKINFLOAT, 0, "Open in Floating Browser").setOnMenuItemClickListener (handler);
 		  } 
 	  }
 	  
@@ -605,7 +597,11 @@ public class IncognitoActivity extends Activity implements OnClickListener
 				view.goForward ();
 				goingBack = "";
 			  }
-
+			  
+			  //OPTIONAL SAVE HISTORY
+			if(savewebdata.getBoolean("incogHistory",false)){
+			   appendHistory (view.getTitle () + " 》 " + url);
+			}
 			super.onPageFinished (view, url);
 		  }
 
@@ -696,6 +692,21 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			return super.onConsoleMessage (consoleMessage);
 		  }
 
+	  }
+	  
+	public void appendHistory(String newEntry)
+	  {
+		try {
+			File file = new File (getFilesDir () + "/history.dat");
+			if (!file.exists ())file.createNewFile ();
+
+			BufferedWriter bufferedWriter = new BufferedWriter (new FileWriter (file, true));
+			bufferedWriter.write ("\n" + newEntry);
+			bufferedWriter.close ();
+		  }
+		catch (IOException e) {
+			e.printStackTrace ();
+		  }
 	  }
 
 	public void SaveImage(String url)

@@ -41,8 +41,13 @@ public class SourceViewer extends Activity
 		
 		if (bundle != null) {
 			String htmlSource = (String) bundle.get ("html");
-			String htmlData ="<!doctype html><html><body><pre><code>" + htmlSource +"</code></pre></body></html>";
-			view.loadData(htmlData, "text/html", "utf-8");
+			//htmlSource = htmlSource.replace("\n","<br>");
+			htmlSource = htmlSource.replace("<","&lt;");
+			htmlSource = htmlSource.replace(">","&gt;");
+			String head=" <head><link rel=\"stylesheet\" href=\"highlight.JS/styles/monokai.css\"><script src=\"highlight.JS/highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></head>";
+			String htmlData ="<!doctype html><html>"+head+"<body><pre><code class=\"html\">" + htmlSource +"</code></pre></body></html>";
+			
+			view.loadDataWithBaseURL("file:///android_asset/",htmlData, "text/html", "utf-8",null);
 		  }
 		
 	  }

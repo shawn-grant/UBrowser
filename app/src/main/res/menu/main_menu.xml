@@ -53,6 +53,11 @@
 						android:id="@+id/viewsource"
 						android:icon="@drawable/viewsource"
 						android:title="View Source"/>
+					
+					<item
+						android:id="@+id/domEdit"
+						android:icon="@drawable/code"
+						android:title="DOM Editor"/>
 
 					<item
 						android:id="@+id/log"

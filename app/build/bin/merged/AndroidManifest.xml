@@ -21,6 +21,26 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
+            android:value="632.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
+            android:value="598.0dip" />
+
         <activity
             android:name="com.codecomplete.ubrowser.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -28,6 +48,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -77,6 +98,16 @@
             android:label="View Source" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_SOURCE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.codecomplete.ubrowser.DOMEditor"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="DOM Editor" >
+            <intent-filter>
+                <action android:name="android.intent.action.DOM" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -209,6 +209,7 @@ public class ResultsActivity extends Activity
 				}
 			});
 
+		historyList.scrollTo(0,historyList.getHeight());
 	  }
 
 
