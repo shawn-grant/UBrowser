@@ -71,6 +71,11 @@
 						android:title="Scratchpad"/>
 				</menu>
 			</item>
+			
+			<item
+				android:id="@+id/shortcut"
+				android:icon="@drawable/shortcut"
+				android:title="Add Shortcut"/>
 
 			<item
 				android:id="@+id/share"

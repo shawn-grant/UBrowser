@@ -202,7 +202,16 @@ public class ResultsActivity extends Activity
 						public void onClick(DialogInterface p1, int p2)
 						  {
 							// TODO: Implement this method
+							try {
+								File file = new File (getFilesDir () + "/history.dat");
+								if (!file.exists ())file.createNewFile ();
 
+								Boolean b = file.delete ();
+								displayHistory();
+							  }
+							catch (IOException e) {
+								e.printStackTrace ();
+							  }
 						  }
 					  }).show ();
 				  return true;
@@ -322,6 +331,8 @@ public class ResultsActivity extends Activity
 									public void onClick(DialogInterface p1, int p2)
 									  {
 										// TODO: Implement this method
+										File file = new File (getFilesDir () + "/bookmarks.dat");
+										Boolean b = file.delete ();
 										LoadBookmarks ();
 									  }
 								  }).show ();

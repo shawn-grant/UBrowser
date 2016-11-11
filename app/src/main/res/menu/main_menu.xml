@@ -55,11 +55,6 @@
 						android:title="View Source"/>
 					
 					<item
-						android:id="@+id/domEdit"
-						android:icon="@drawable/code"
-						android:title="DOM Editor"/>
-
-					<item
 						android:id="@+id/log"
 						android:icon="@drawable/log"
 						android:title="View Log"/>
@@ -76,6 +71,11 @@
 				</menu>
 			</item>
 
+			<item
+				android:id="@+id/shortcut"
+				android:icon="@drawable/shortcut"
+				android:title="Add Shortcut"/>
+			
 			<item
 				android:id="@+id/share"
 				android:icon="@drawable/share"

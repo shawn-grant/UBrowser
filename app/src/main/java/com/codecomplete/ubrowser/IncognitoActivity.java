@@ -41,9 +41,10 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 	private int ID_SAVEIMAGE=1000;
 	private int ID_VIEWIMAGE=2000;
-	private int ID_SAVELINK=3000;
-	private int ID_SHARELINK=4000;
-	private int ID_OPENLINK=5000;
+	private int ID_SET_AS_BG=3000;
+	private int ID_SAVELINK=4000;
+	private int ID_SHARELINK=5000;
+	private int ID_OPENLINK=6000;	
 
 	private int REQUEST_CODE_RESULTS=100;
 	
@@ -85,6 +86,10 @@ public class IncognitoActivity extends Activity implements OnClickListener
 		setUpWebView ();
 		setUrlBarControl ();
 		addFloatingMenu ();
+		//alert if history will be saved
+		if(savewebdata.getBoolean("incogHistory",false)){
+			Toast.makeText(this, "NB :YOUR INCOGITO HISTORY WILL BE SAVED.\nChange in settings.", 4000).show();
+		  }
 	  }
 
 	public void setUpWebView()
@@ -215,16 +220,35 @@ public class IncognitoActivity extends Activity implements OnClickListener
 					  webview.loadUrl (result.getExtra ());
 					  break;
 
-					  //SAVE LINK
+					  //SET IMAGE AS BACKGROUND
 					case 3000:
+					  WallpaperManager wallpaperManager = WallpaperManager.getInstance (getApplicationContext ());
+		      		  try {
+						  InputStream is = (InputStream) new URL (result.getExtra ()).getContent ();
+						  Drawable drawable= Drawable.createFromStream (is, "wallpaper_image");
+						  Bitmap bitmap = Bitmap.createBitmap (drawable.getIntrinsicWidth (), drawable.getIntrinsicHeight (), Bitmap.Config.ARGB_8888); 
+						  Canvas canvas = new Canvas (bitmap); 
+						  drawable.setBounds (0, 0, drawable.getIntrinsicWidth (), drawable.getIntrinsicHeight ()); 
+						  drawable.draw (canvas);
+						  wallpaperManager.setBitmap (bitmap);
+						  Toast.makeText (getApplicationContext (), "Wallpaper set", 2000).show ();
+						}
+					  catch (IOException e) {
+						  e.printStackTrace ();
+						  Toast.makeText (getApplicationContext (), "Set Wallpaper failed", 2000).show ();
+						}
+					  break;
+
+					  //SAVE LINK
+					case 4000:
 					  android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService (CLIPBOARD_SERVICE); 
 					  ClipData clip = ClipData.newPlainText (result.getExtra (), result.getExtra ()); 
 					  clipboard.setPrimaryClip (clip);
-					  Toast.makeText (IncognitoActivity.this, "Copied to clipBoard", 2000).show ();
+					  Toast.makeText (IncognitoActivity.this, "Copied to ClipBoard", 2000).show ();
 					  break;
 
 					  //SHARE LINK
-					case 4000:
+					case 5000:
 					  Intent intent = new Intent (Intent.ACTION_SEND); 
 					  intent.setType ("text/plain"); 
 					  intent.putExtra (Intent.EXTRA_TEXT, result.getExtra ()); 
@@ -233,7 +257,7 @@ public class IncognitoActivity extends Activity implements OnClickListener
 					  break;
 
 					  //OPEN LINK
-					case 5000:
+					case 6000:
 					  webview.loadUrl (result.getExtra ());
 					  break;
 				  }
@@ -247,7 +271,9 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			menu.setHeaderTitle (result.getExtra ());
 			menu.add (0, ID_SAVEIMAGE, 0, "Save Image").setOnMenuItemClickListener (handler); 
 			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler);
-			menu.add (0, ID_SAVELINK, 0, "Copy image URL").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_SAVELINK, 0, "Copy Image URL").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SHARELINK, 0, "Share Image Url").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SET_AS_BG, 0, "Set as Wallpaper").setOnMenuItemClickListener (handler);
 		  }
 		//if hyperlink
 		else if (result.getType () == WebView.HitTestResult.ANCHOR_TYPE || result.getType () == WebView.HitTestResult.SRC_ANCHOR_TYPE) { 
@@ -360,6 +386,10 @@ public class IncognitoActivity extends Activity implements OnClickListener
 
 			case R.id.print:			
 			  printWebDoc ();
+			  break;
+			  
+			case R.id.shortcut:
+			  addShortcut();
 			  break;
 
 			case R.id.viewsource:
@@ -829,6 +859,21 @@ public class IncognitoActivity extends Activity implements OnClickListener
 			}).show ();		
 	  }
 
+	private void addShortcut()
+	  { 
+		//Adding shortcut for website on Home screen 
+		Intent shortcutIntent = new Intent (getApplicationContext(), MainActivity.class);
+		shortcutIntent.setData(Uri.parse(webview.getUrl()));
+
+		Intent addIntent = new Intent (); 
+		addIntent .putExtra (Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent); 
+		addIntent.putExtra (Intent.EXTRA_SHORTCUT_NAME, webview.getTitle()); 
+		addIntent.putExtra (Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext (getApplicationContext (), R.drawable.shortcut)); 
+		addIntent .setAction ("com.android.launcher.action.INSTALL_SHORTCUT"); 
+		addIntent.putExtra ("duplicate", false); 
+		//may it's already there so don't duplicate 
+		getApplicationContext ().sendBroadcast (addIntent); 
+	  }
 
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	  {

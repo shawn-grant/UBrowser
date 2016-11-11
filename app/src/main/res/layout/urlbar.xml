@@ -23,7 +23,7 @@
 		android:background="#000000"
 		android:id="@+id/content">
 
-		
+
 		<ImageView
 			android:id="@+id/stop"
 			android:src="@drawable/stop"
@@ -31,7 +31,7 @@
 			android:layout_marginRight="10dp"
 			android:layout_width="60dp"
 			android:layout_height="60dp"/>
-		
+
 		<ImageView
 			android:id="@+id/info"
 			android:src="@drawable/info"
@@ -39,6 +39,97 @@
 			android:layout_marginRight="5dp"
 			android:layout_width="30dp"
 			android:layout_height="30dp"/>
+
+		<ImageView
+			android:id="@+id/autocomplete"
+			android:src="@drawable/icon"
+			android:onClick="onClick"
+			android:layout_marginRight="5dp"
+			android:visibility="gone"
+			android:layout_width="30dp"
+			android:layout_height="30dp"/>
+
+		<HorizontalScrollView
+			android:id="@+id/urlSuggestions"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content"
+			android:visibility="gone">
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center">
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text="http://"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text="https://"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text=".com"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text=".net"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text=".org"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text=".github.io"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+				<TextView
+					android:background="#464C4C"
+					android:textColor="#33ccff"
+					android:text=".edu"
+					android:padding="5dp"
+					android:layout_margin="5dp"
+					android:onClick="UrlComplete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+			</LinearLayout>
+		</HorizontalScrollView>
 
 		<HorizontalScrollView
 			android:layout_width="wrap_content"

@@ -43,9 +43,10 @@ public class MainActivity extends Activity implements OnClickListener
 
 	private int ID_SAVEIMAGE=1000;
 	private int ID_VIEWIMAGE=2000;
-	private int ID_SAVELINK=3000;
-	private int ID_SHARELINK=4000;
-	private int ID_OPENLINK=5000;
+	private int ID_SET_AS_BG=3000;
+	private int ID_SAVELINK=4000;
+	private int ID_SHARELINK=5000;
+	private int ID_OPENLINK=6000;	
 
 	private int REQUEST_CODE_RESULTS=100;
 
@@ -131,6 +132,22 @@ public class MainActivity extends Activity implements OnClickListener
 				  return true;
 				}
 			});
+
+		urlbar.setOnFocusChangeListener (new OnFocusChangeListener (){
+
+			  @Override
+			  public void onFocusChange(View p1, boolean p2)
+				{
+				  // TODO: Implement this method
+				  if (p2) {
+					  findViewById (R.id.autocomplete).setVisibility (View.VISIBLE);
+					}
+				  else {
+					  findViewById (R.id.autocomplete).setVisibility (View.GONE);
+					  findViewById (R.id.urlSuggestions).setVisibility (View.GONE);
+					}
+				}
+			});
 	  }
 
 	public void addFloatingMenu()
@@ -210,8 +227,27 @@ public class MainActivity extends Activity implements OnClickListener
 					  webview.loadUrl (result.getExtra ());
 					  break;
 
-					  //SAVE LINK
+					  //SET IMAGE AS BACKGROUND
 					case 3000:
+					  WallpaperManager wallpaperManager = WallpaperManager.getInstance (getApplicationContext ());
+		      		  try {
+						  InputStream is = (InputStream) new URL (result.getExtra ()).getContent ();
+						  Drawable drawable= Drawable.createFromStream (is, "wallpaper_image");
+						  Bitmap bitmap = Bitmap.createBitmap (drawable.getIntrinsicWidth (), drawable.getIntrinsicHeight (), Bitmap.Config.ARGB_8888); 
+						  Canvas canvas = new Canvas (bitmap); 
+						  drawable.setBounds (0, 0, drawable.getIntrinsicWidth (), drawable.getIntrinsicHeight ()); 
+						  drawable.draw (canvas);
+						  wallpaperManager.setBitmap (bitmap);
+						  Toast.makeText (getApplicationContext (), "Wallpaper set", 2000).show ();
+						}
+					  catch (IOException e) {
+						  e.printStackTrace ();
+						  Toast.makeText (getApplicationContext (), "Set Wallpaper failed", 2000).show ();
+						}
+					  break;
+
+					  //SAVE LINK
+					case 4000:
 					  ClipboardManager clipboard = (ClipboardManager) getSystemService (CLIPBOARD_SERVICE); 
 					  ClipData clip = ClipData.newPlainText (result.getExtra (), result.getExtra ()); 
 					  clipboard.setPrimaryClip (clip);
@@ -219,7 +255,7 @@ public class MainActivity extends Activity implements OnClickListener
 					  break;
 
 					  //SHARE LINK
-					case 4000:
+					case 5000:
 					  Intent intent = new Intent (Intent.ACTION_SEND); 
 					  intent.setType ("text/plain"); 
 					  intent.putExtra (Intent.EXTRA_TEXT, result.getExtra ()); 
@@ -228,7 +264,7 @@ public class MainActivity extends Activity implements OnClickListener
 					  break;
 
 					  //OPEN LINK
-					case 5000:
+					case 6000:
 					  webview.loadUrl (result.getExtra ());
 					  break;
 				  }
@@ -242,7 +278,9 @@ public class MainActivity extends Activity implements OnClickListener
 			menu.setHeaderTitle (result.getExtra ());
 			menu.add (0, ID_SAVEIMAGE, 0, "Save Image").setOnMenuItemClickListener (handler); 
 			menu.add (0, ID_VIEWIMAGE, 0, "View Image").setOnMenuItemClickListener (handler);
-			menu.add (0, ID_SAVELINK, 0, "Copy Image URL").setOnMenuItemClickListener (handler); 
+			menu.add (0, ID_SAVELINK, 0, "Copy Image URL").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SHARELINK, 0, "Share Image Url").setOnMenuItemClickListener (handler);
+			menu.add (0, ID_SET_AS_BG, 0, "Set as Wallpaper").setOnMenuItemClickListener (handler);
 		  }
 		//if hyperlink
 		else if (result.getType () == WebView.HitTestResult.ANCHOR_TYPE || result.getType () == WebView.HitTestResult.SRC_ANCHOR_TYPE) { 
@@ -310,12 +348,6 @@ public class MainActivity extends Activity implements OnClickListener
 			  startActivity (i);
 			  break;
 
-			case R.id.domEdit:
-			  Intent dom= new Intent ("android.intent.action.DOM");
-			  dom.putExtra ("url", webview.getUrl ());
-			  startActivity (dom);
-			  break;
-
 			case R.id.log:
 			  TextView tv=new TextView (this);
 			  tv.setText (logtxt, TextView.BufferType.SPANNABLE);
@@ -325,6 +357,10 @@ public class MainActivity extends Activity implements OnClickListener
 
 			case R.id.savehtml:
 			  SaveHtml ();
+			  break;
+			  
+			case R.id.shortcut:
+			  addShortcut();
 			  break;
 
 			case R.id.share:
@@ -528,7 +564,23 @@ public class MainActivity extends Activity implements OnClickListener
 				}
 			  catch (MalformedURLException e) {}
 			  break;
+
+			case R.id.autocomplete:
+			  if (findViewById (R.id.urlSuggestions).getVisibility () == View.GONE) {
+				  findViewById (R.id.urlSuggestions).setVisibility (View.VISIBLE);
+				}
+			  else {
+				  findViewById (R.id.urlSuggestions).setVisibility (View.GONE);
+				}
+			  break;
 		  }
+	  }
+
+	public void UrlComplete(View v)
+	  {
+		TextView tv= (TextView) v;
+		String s = tv.getText ().toString ();
+		urlbar.setText (urlbar.getText ().toString () + s);
 	  }
 
 	@Override
@@ -846,10 +898,26 @@ public class MainActivity extends Activity implements OnClickListener
 					}
 				  catch ( Exception e ) { 
 					  e.printStackTrace ();
-					  Toast.makeText (MainActivity.this, "Couldn't receive HTML content", Toast.LENGTH_SHORT).show ();
+					  Toast.makeText (MainActivity.this, "Couldn't retrieve HTML content", Toast.LENGTH_SHORT).show ();
 					}
 				}
 			}).show ();		
+	  }
+
+	private void addShortcut()
+	  { 
+		//Adding shortcut for website on Home screen 
+		Intent shortcutIntent = new Intent (getApplicationContext(), MainActivity.class);
+		shortcutIntent.setData(Uri.parse(webview.getUrl()));
+		
+		Intent addIntent = new Intent (); 
+		addIntent .putExtra (Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent); 
+		addIntent.putExtra (Intent.EXTRA_SHORTCUT_NAME, webview.getTitle()); 
+		addIntent.putExtra (Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext (getApplicationContext (), R.drawable.shortcut)); 
+		addIntent .setAction ("com.android.launcher.action.INSTALL_SHORTCUT"); 
+		addIntent.putExtra ("duplicate", false); 
+		//may it's already there so don't duplicate 
+		getApplicationContext ().sendBroadcast (addIntent); 
 	  }
 
 
